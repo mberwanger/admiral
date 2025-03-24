@@ -217,28 +217,6 @@ docker_manifests:
 sboms:
   - artifacts: archive
 
-#signs:
-#  - cmd: cosign
-#    stdin: '{{ .Env.COSIGN_PWD }}'
-#    args: ["sign-blob", "-key=cosign.key", "-output=${signature}", "${artifact}"]
-#    artifacts: checksum
-
-#signs:
-#  - cmd: cosign
-#    certificate: "${artifact}.pem"
-#    output: true
-#    artifacts: checksum
-#    args:
-#      - sign-blob
-#      - "--output-certificate=${certificate}"
-#      - "--output-signature=${signature}"
-#      - "${artifact}"
-#      - "--yes"
-
-#docker_signs:
-#  - artifacts: manifests
-#    stdin: '{{ .Env.COSIGN_PWD }}'
-
 release:
   footer: |
     **Full Changelog**: https://github.com/mberwanger/admiral/compare/{{ .PreviousTag }}...{{ .Tag }}
