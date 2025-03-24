@@ -1,11 +1,17 @@
 # Web build
-FROM node:23-bullseye AS nodebuild
+FROM oven/bun:latest AS webbuild
 
 WORKDIR /app
 
 COPY ./web ./web
 COPY ./tools ./tools
 COPY ./Makefile .
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      make \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/
 
 RUN make web
 
@@ -18,7 +24,7 @@ COPY ./server ./server
 COPY ./tools/preflight-checks.sh ./tools/preflight-checks.sh
 COPY ./Makefile .
 
-COPY --from=nodebuild /app/web/build ./web/build
+COPY --from=webbuild /app/web/build ./web/build
 
 RUN make server-with-assets
 

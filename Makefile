@@ -3,9 +3,6 @@ SHELL:=/usr/bin/env bash
 
 MAKEFLAGS += --no-print-directory
 
-VERSION ?= 0.0.0-dev
-
-BUN:=./build/bin/bun
 PROJECT_ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 .PHONY: help # Print this help message.
@@ -61,39 +58,61 @@ preflight-checks-server:
 
 .PHONY: web # Build production web assets.
 web: preflight-checks-web bun-install
-	$(BUN) run --cwd web build
+	bun run --cwd web build
 
 .PHONY: web-dev-build # Build development web assets.
 web-dev-build: bun-install
-	$(BUN) run --cwd web preview
+	bun run --cwd web preview
 
 .PHONY: web-dev # Start the web in development mode.
 web-dev: bun-install
-	$(BUN) run --cwd web dev
+	bun run --cwd web dev
 
 .PHONY: web-lint # Lint the web code.
 web-lint: bun-install
-	$(BUN) run --cwd web lint
+	bun run --cwd web lint
 
 .PHONY: web-lint-fix # Lint and fix the web code.
 web-lint-fix: bun-install
-	$(BUN) run --cwd web lint:fix
+	bun run --cwd web lint:fix
 
 .PHONY: web-test # Run unit tests for the web code.
 web-test: bun-install
-	$(BUN) test --cwd web
+	bun test --cwd web
 
 .PHONY: web-verify # Verify web packages are sorted.
 web-verify: bun-install
-	$(BUN) run --cwd web lint:packages
+	bun run --cwd web lint:packages
 
-.PHONY: bun-ensure # Install the pinned version of bun.
-bun-ensure:
-	@./tools/install-bun.sh
+.PHONY: preflight-checks-agent
+preflight-checks-agent:
+	@tools/preflight-checks.sh agent
+
+.PHONY: agent # Build the agent.
+agent: preflight-checks-agent
+	cd agent && go build -o ../build/agent
+
+.PHONY: agent-lint # Lint the agent code.
+agent-lint: preflight-checks-agent
+	tools/golangci-lint.sh run --timeout 2m30s
+
+.PHONY: agent-lint-fix # Lint and fix the agent code.
+agent-lint-fix:
+	tools/golangci-lint.sh run --fix
+	cd agent && go mod tidy
+
+.PHONY: agent-test # Run unit tests for the agent code.
+agent-test: preflight-checks-agent
+	cd agent && go test -race -covermode=atomic ./...
+
+.PHONY: server-verify # Verify go modules' requirements files are clean.
+agent-verify:
+	cd agent && go mod tidy
+	tools/ensure-no-diff.sh agent
 
 .PHONY: bun-install # Install web dependencies.
-bun-install: bun-ensure
-	$(BUN) install --cwd web --frozen-lockfile
+bun-install:
+	bun install --cwd web --frozen-lockfile
 
 .PHONY: preflight-checks-web
 preflight-checks-web:

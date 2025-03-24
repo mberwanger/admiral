@@ -6,7 +6,7 @@ did_checks_pass=true
 
 # Minimum versions
 MIN_GO_VERSION="1.20"
-MIN_NODE_VERSION="20.0.0"
+MIN_BUN_VERSION="1.0"
 
 SCRIPT_ROOT="$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")"
 REPO_ROOT="${SCRIPT_ROOT}"
@@ -33,7 +33,7 @@ is_version_ok() {
   fi
 }
 
-os() {
+check_os() {
   # If we're on OSX lets check for brew and coreutils as they are requirements
   if [[ "$OSTYPE" == "darwin"* ]]; then
     # check brew is installed
@@ -51,7 +51,7 @@ os() {
   fi
 }
 
-server() {
+check_go() {
   if ! command -v go -v &> /dev/null; then
     echo "golang is not installed or cannot be found in the current PATH, this is a required dependency."
     did_checks_pass=false
@@ -64,16 +64,22 @@ server() {
   fi
 }
 
+agent() {
+  check_go
+}
+
+server() {
+  check_go
+}
+
 web() {
-  if ! command -v node -v &> /dev/null; then
-    echo "nodejs is not installed or cannot be found in the current PATH, this is a required dependency."
+  if ! command -v bun --version &> /dev/null; then
+    echo "bun is not installed or cannot be found in the current PATH, this is a required dependency."
     did_checks_pass=false
   else
-    current_version=$(node --version)
-    # remove the leading v from the version output
-    nov=${current_version:1}
-    if ! is_version_ok $MIN_NODE_VERSION "$nov"; then
-      echo "node version must be >= $MIN_NODE_VERSION, current version $nov"
+    current_version=$(bun --version)
+    if ! is_version_ok $MIN_BUN_VERSION "$current_version"; then
+      echo "bun version must be >= $MIN_BUN_VERSION, current version $current_version"
       did_checks_pass=false
     fi
   fi
@@ -82,15 +88,18 @@ web() {
 main() {
   echo "Running pre-flight checks..."
   # always check OS level requirements
-  os
+  check_os
 
   if [ $# -ge 1 ] && [ -n "$1" ]; then
-    if [ "$1" == "server" ]; then
+    if [ "$1" == "agent" ]; then
+      agent
+    elif [ "$1" == "server" ]; then
       server
     elif [ "$1" == "web" ]; then
       web
     fi
   else
+    agent
     server
     web
   fi
