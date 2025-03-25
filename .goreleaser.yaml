@@ -9,9 +9,6 @@ before:
   hooks:
     - make web
 
-gomod:
-  dir: server
-
 report_sizes: true
 
 builds:
@@ -23,10 +20,17 @@ builds:
       - linux
       - darwin
     goarch:
+      - "386"
       - amd64
+      - arm
       - arm64
     mod_timestamp: "{{ .CommitTimestamp }}"
     dir: server
+    hooks:
+      pre:
+        - cmd: go run cmd/assets/generate.go ../web/build
+          dir: server
+          output: true
     flags:
       - -tags=withAssets -trimpath
     ldflags:

@@ -1,9 +1,9 @@
 package app
 
 import (
-	"github.com/mberwanger/admiral/server/cmd/assets"
 	"github.com/spf13/cobra"
 
+	"github.com/mberwanger/admiral/server/cmd/assets"
 	"github.com/mberwanger/admiral/server/config"
 	"github.com/mberwanger/admiral/server/gateway"
 )

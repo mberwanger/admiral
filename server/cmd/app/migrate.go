@@ -5,18 +5,19 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"github.com/golang-migrate/migrate/v4/source/iofs"
-	"github.com/mberwanger/admiral/server/config"
-	"github.com/mberwanger/admiral/server/service/database"
-	"github.com/uber-go/tally/v4"
 	"strings"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
+	"github.com/uber-go/tally/v4"
 	"go.uber.org/zap"
+
+	"github.com/mberwanger/admiral/server/config"
+	"github.com/mberwanger/admiral/server/service/database"
 )
 
 type migrateCmd struct {
