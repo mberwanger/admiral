@@ -1,0 +1,22 @@
+.idea/
+.vscode/
+.DS_STORE
+
+# git
+.git/
+.github/
+**/.gitattributes
+**/.gitignore
+
+# build tools
+build/
+
+# server
+server/.air
+
+# web
+web/build
+web/node_modules
+
+# docs
+docs/

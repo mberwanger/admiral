@@ -1,0 +1,226 @@
+version: 2
+
+project_name: admiral
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-dev"
+
+before:
+  hooks:
+    - make web
+
+gomod:
+  dir: server
+
+report_sizes: true
+
+builds:
+  - id: admiral
+    binary: admiral
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    dir: server
+    flags:
+      - -tags=withAssets -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/mberwanger/admiral/server/version.version={{.Version}}
+      - -X github.com/mberwanger/admiral/server/version.commit={{.FullCommit}}
+      - -X github.com/mberwanger/admiral/server/version.date={{.Date}}
+      - -X github.com/mberwanger/admiral/server/version.builtBy=mberwanger
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^test:"
+      - "^chore"
+      - "merge conflict"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+      - go mod tidy
+  groups:
+    - title: Dependency updates
+      regexp: '^.*?(feat|fix)\(deps\)!?:.+$'
+      order: 300
+    - title: "New Features"
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 100
+    - title: "Security updates"
+      regexp: '^.*?sec(\([[:word:]]+\))??!?:.+$'
+      order: 150
+    - title: "Bug fixes"
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 200
+    - title: "Documentation updates"
+      regexp: ^.*?doc(\([[:word:]]+\))??!?:.+$
+      order: 400
+    - title: "Build process updates"
+      regexp: ^.*?build(\([[:word:]]+\))??!?:.+$
+      order: 400
+    - title: Other work
+      order: 9999
+
+archives:
+  - formats: [tar.gz]
+    name_template: >-
+      {{ .ProjectName }}-v{{ .Version }}_{{ .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - README.md
+      - LICENSE
+      - src: "server/config.yaml"
+        dst: "config.yaml"
+
+dockers:
+  - image_templates:
+      - "mberwanger/admiral:{{ .Tag }}-arm64"
+      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-amd64"
+    dockerfile: Dockerfile.server
+    use: buildx
+    build_flag_templates:
+      - "--pull"
+      - '--label=io.artifacthub.package.maintainers=[{"name":"Admiral","email":"mberwanger@protonmail.com"}]'
+      - "--label=io.artifacthub.package.license=Apache-2.0"
+      - "--label=org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily."
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source={{.GitURL}}"
+      - "--platform=linux/amd64"
+    extra_files:
+      - server
+      - tools
+      - web
+      - Makefile
+  - image_templates:
+      - "mberwanger/admiral:{{ .Tag }}-arm64"
+      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-arm64"
+    dockerfile: Dockerfile.server
+    use: buildx
+    build_flag_templates:
+      - "--pull"
+      - '--label=io.artifacthub.package.maintainers=[{"name":"Admiral","email":"mberwanger@protonmail.com"}]'
+      - "--label=io.artifacthub.package.license=Apache-2.0"
+      - "--label=org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily."
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source={{.GitURL}}"
+      - "--platform=linux/arm64"
+    goarch: arm64
+    extra_files:
+      - server
+      - tools
+      - web
+      - Makefile
+  - image_templates:
+      - "mberwanger/admiral-agent:{{ .Tag }}-arm64"
+      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-amd64"
+    dockerfile: Dockerfile.agent
+    use: buildx
+    build_flag_templates:
+      - "--pull"
+      - '--label=io.artifacthub.package.maintainers=[{"name":"Admiral","email":"mberwanger@protonmail.com"}]'
+      - "--label=io.artifacthub.package.license=Apache-2.0"
+      - "--label=org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily."
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}-agent"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source={{.GitURL}}"
+      - "--platform=linux/amd64"
+    extra_files:
+      - agent
+      - client
+      - server
+      - tools
+      - Makefile
+  - image_templates:
+      - "mberwanger/admiral-agent:{{ .Tag }}-arm64"
+      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-arm64"
+    dockerfile: Dockerfile.agent
+    use: buildx
+    build_flag_templates:
+      - "--pull"
+      - '--label=io.artifacthub.package.maintainers=[{"name":"Admiral","email":"mberwanger@protonmail.com"}]'
+      - "--label=io.artifacthub.package.license=Apache-2.0"
+      - "--label=org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily."
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}-agent"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source={{.GitURL}}"
+      - "--platform=linux/arm64"
+    goarch: arm64
+    extra_files:
+      - agent
+      - client
+      - server
+      - tools
+      - Makefile
+
+docker_manifests:
+  - name_template: 'mberwanger/admiral:{{ .Tag }}'
+    image_templates:
+      - 'mberwanger/admiral:{{ .Tag }}-amd64'
+      - 'mberwanger/admiral:{{ .Tag }}-arm64'
+  - name_template: "ghcr.io/mberwanger/admiral:{{ .Tag }}"
+    image_templates:
+      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-arm64"
+  - name_template: 'mberwanger/admiral:latest'
+    image_templates:
+      - 'mberwanger/admiral:{{ .Tag }}-amd64'
+      - 'mberwanger/admiral:{{ .Tag }}-arm64'
+  - name_template: "ghcr.io/mberwanger/admiral:latest"
+    image_templates:
+      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-arm64"
+  - name_template: 'mberwanger/admiral-agent:{{ .Tag }}'
+    image_templates:
+      - 'mberwanger/admiral-agent:{{ .Tag }}-amd64'
+      - 'mberwanger/admiral-agent:{{ .Tag }}-arm64'
+  - name_template: "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}"
+    image_templates:
+      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-arm64"
+  - name_template: 'mberwanger/admiral-agent:latest'
+    image_templates:
+      - 'mberwanger/admiral-agent:{{ .Tag }}-amd64'
+      - 'mberwanger/admiral-agent:{{ .Tag }}-arm64'
+  - name_template: "ghcr.io/mberwanger/admiral-agent:latest"
+    image_templates:
+      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-arm64"
+
+sboms:
+  - artifacts: archive
+
+release:
+  footer: |
+    **Full Changelog**: https://github.com/mberwanger/admiral/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+    ## Helping out
+
+    This release is only possible thanks to **all** the support of some **awesome people**!

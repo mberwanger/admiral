@@ -1,0 +1,33 @@
+server:
+  listener:
+    address: 0.0.0.0
+    port: 8080
+  timeouts:
+    default: 30s
+  logger:
+    level: debug
+  access_log:
+    status_code_filters:
+      - 2  # Unknown
+      - 4  # DeadlineExceeded
+      - 12 # Unimplemented
+      - 14 # Unavailable
+  enable_pprof: false
+  stats:
+    flush_interval: 1s
+    go_runtime_stats:
+      collection_interval: 5s
+    reporter_type: prometheus
+handlers: {}
+services:
+  database:
+    host: 127.0.0.1
+    port: 5432
+    database_name: admiral
+    user: admiral
+    password: secret
+    ssl_mode: disable
+  authn:
+    issuer: ${OAUTH2_ISSUER}
+    client_id:  ${OAUTH2_CLIENT_ID}
+    client_secret:  ${OAUTH2_CLIENT_SECRET}
