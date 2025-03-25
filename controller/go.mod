@@ -1,4 +1,4 @@
-module github.com/mberwanger/admiral/agent
+module github.com/mberwanger/admiral/client
 
 go 1.24.1
 
