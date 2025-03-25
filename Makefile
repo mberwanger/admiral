@@ -137,7 +137,7 @@ verify: server-verify web-verify
 .PHONY: clean # Remove build and cache artifacts.
 clean:
 	rm -rf build
-	cd server && rm -rf .air
+	cd server && rm -rf .air && rm cmd/assets/generated_assets.go
 	cd web && rm -rf build node_modules
 
 .PHONY: preflight-checks
