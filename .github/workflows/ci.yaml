@@ -15,6 +15,10 @@ jobs:
         id: setup-go
         with:
           go-version-file: "server/go.mod"
+      - name: Install Bun
+        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+        with:
+          bun-version: latest
       - name: Lint
         run: make lint
         continue-on-error: true
@@ -32,6 +36,10 @@ jobs:
         id: setup-go
         with:
           go-version-file: "server/go.mod"
+      - name: Install Bun
+        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+        with:
+          bun-version: latest
       - name: Test
         run: make test
         env:
