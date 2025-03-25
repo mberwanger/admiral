@@ -95,7 +95,7 @@ archives:
 
 dockers:
   - image_templates:
-      - "mberwanger/admiral:{{ .Tag }}-arm64"
+      - "mberwanger/admiral:{{ .Tag }}-amd64"
       - "ghcr.io/mberwanger/admiral:{{ .Tag }}-amd64"
     dockerfile: Dockerfile.server
     use: buildx
@@ -115,6 +115,7 @@ dockers:
       - tools
       - web
       - Makefile
+      -
   - image_templates:
       - "mberwanger/admiral:{{ .Tag }}-arm64"
       - "ghcr.io/mberwanger/admiral:{{ .Tag }}-arm64"
@@ -138,7 +139,7 @@ dockers:
       - web
       - Makefile
   - image_templates:
-      - "mberwanger/admiral-agent:{{ .Tag }}-arm64"
+      - "mberwanger/admiral-agent:{{ .Tag }}-amd64"
       - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-amd64"
     dockerfile: Dockerfile.agent
     use: buildx
@@ -200,6 +201,7 @@ docker_manifests:
     image_templates:
       - "ghcr.io/mberwanger/admiral:{{ .Tag }}-amd64"
       - "ghcr.io/mberwanger/admiral:{{ .Tag }}-arm64"
+
   - name_template: 'mberwanger/admiral-agent:{{ .Tag }}'
     image_templates:
       - 'mberwanger/admiral-agent:{{ .Tag }}-amd64'
