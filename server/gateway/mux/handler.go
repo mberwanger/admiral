@@ -92,38 +92,3 @@ func (a *assetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	a.fileServer.ServeHTTP(w, r)
 }
-
-//
-//func (a *assetHandler) isStaticPathRoutable(urlPath string) bool {
-//	if a.assetCfg != nil && a.assetCfg.RoutableStaticPath {
-//		// If the path is the base route, we need to serve the SPA.
-//		return staticRoutePattern.MatchString(urlPath) && path.Ext(urlPath) == "" && urlPath != "/"
-//	}
-//
-//	return false
-//}
-//
-//func (a *assetHandler) assetProviderHandler(ctx context.Context, urlPath string) (io.ReadCloser, error) {
-//	switch a.assetCfg.Provider.(type) {
-//	case *gatewayv1.Assets_S3:
-//		aws, err := getAssetProviderService(a.assetCfg)
-//		if err != nil {
-//			return nil, err
-//		}
-//
-//		awsClient, ok := aws.(awsservice.Client)
-//		if !ok {
-//			return nil, fmt.Errorf("Unable to aquire the aws client")
-//		}
-//
-//		return awsClient.S3StreamingGet(
-//			ctx,
-//			awsClient.GetPrimaryAccountAlias(),
-//			a.assetCfg.GetS3().Region,
-//			a.assetCfg.GetS3().Bucket,
-//			path.Join(a.assetCfg.GetS3().Key, strings.TrimPrefix(urlPath, "/static")),
-//		)
-//	default:
-//		return nil, fmt.Errorf("configured asset provider has not been implemented")
-//	}
-//}
