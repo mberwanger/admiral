@@ -3,7 +3,7 @@ FROM golang:1.24-bullseye AS gobuild
 
 WORKDIR /app
 
-COPY ./agent ./agent
+COPY ./controller ./controller
 COPY ./client ./client
 COPY ./tools/preflight-checks.sh ./tools/preflight-checks.sh
 COPY ./Makefile .
@@ -15,6 +15,6 @@ FROM gcr.io/distroless/base-debian12
 
 WORKDIR /app
 
-COPY --from=gobuild /app/build/agent /app
+COPY --from=gobuild /app/build/controller /app
 
-CMD ["/app/agent"]
+CMD ["/app/controller"]
