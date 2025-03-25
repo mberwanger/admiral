@@ -95,8 +95,7 @@ archives:
 
 dockers:
   - image_templates:
-      - "mberwanger/admiral:{{ .Tag }}-amd64"
-      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-amd64"
     dockerfile: Dockerfile.server
     use: buildx
     build_flag_templates:
@@ -105,7 +104,7 @@ dockers:
       - "--label=io.artifacthub.package.license=Apache-2.0"
       - "--label=org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily."
       - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.name={{.ProjectName}}"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}-server"
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--label=org.opencontainers.image.source={{.GitURL}}"
@@ -115,10 +114,8 @@ dockers:
       - tools
       - web
       - Makefile
-      -
   - image_templates:
-      - "mberwanger/admiral:{{ .Tag }}-arm64"
-      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-arm64"
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-arm64"
     dockerfile: Dockerfile.server
     use: buildx
     build_flag_templates:
@@ -127,7 +124,7 @@ dockers:
       - "--label=io.artifacthub.package.license=Apache-2.0"
       - "--label=org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily."
       - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.name={{.ProjectName}}"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}-server"
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--label=org.opencontainers.image.source={{.GitURL}}"
@@ -139,9 +136,8 @@ dockers:
       - web
       - Makefile
   - image_templates:
-      - "mberwanger/admiral-agent:{{ .Tag }}-amd64"
-      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-amd64"
-    dockerfile: Dockerfile.agent
+      - "ghcr.io/mberwanger/admiral-controller:{{ .Tag }}-amd64"
+    dockerfile: Dockerfile.controller
     use: buildx
     build_flag_templates:
       - "--pull"
@@ -149,21 +145,20 @@ dockers:
       - "--label=io.artifacthub.package.license=Apache-2.0"
       - "--label=org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily."
       - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.name={{.ProjectName}}-agent"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}-controller"
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--label=org.opencontainers.image.source={{.GitURL}}"
       - "--platform=linux/amd64"
     extra_files:
-      - agent
       - client
+      - controller
       - server
       - tools
       - Makefile
   - image_templates:
-      - "mberwanger/admiral-agent:{{ .Tag }}-arm64"
-      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-arm64"
-    dockerfile: Dockerfile.agent
+      - "ghcr.io/mberwanger/admiral-controller:{{ .Tag }}-arm64"
+    dockerfile: Dockerfile.controller
     use: buildx
     build_flag_templates:
       - "--pull"
@@ -171,53 +166,36 @@ dockers:
       - "--label=io.artifacthub.package.license=Apache-2.0"
       - "--label=org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily."
       - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.name={{.ProjectName}}-agent"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}-controller"
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--label=org.opencontainers.image.source={{.GitURL}}"
       - "--platform=linux/arm64"
     goarch: arm64
     extra_files:
-      - agent
       - client
+      - controller
       - server
       - tools
       - Makefile
 
 docker_manifests:
-  - name_template: 'mberwanger/admiral:{{ .Tag }}'
+  - name_template: "ghcr.io/mberwanger/admiral-server:{{ .Tag }}"
     image_templates:
-      - 'mberwanger/admiral:{{ .Tag }}-amd64'
-      - 'mberwanger/admiral:{{ .Tag }}-arm64'
-  - name_template: "ghcr.io/mberwanger/admiral:{{ .Tag }}"
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-arm64"
+  - name_template: "ghcr.io/mberwanger/admiral-server:latest"
     image_templates:
-      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-amd64"
-      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-arm64"
-  - name_template: 'mberwanger/admiral:latest'
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-arm64"
+  - name_template: "ghcr.io/mberwanger/admiral-controller:{{ .Tag }}"
     image_templates:
-      - 'mberwanger/admiral:{{ .Tag }}-amd64'
-      - 'mberwanger/admiral:{{ .Tag }}-arm64'
-  - name_template: "ghcr.io/mberwanger/admiral:latest"
+      - "ghcr.io/mberwanger/admiral-controller:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-controller:{{ .Tag }}-arm64"
+  - name_template: "ghcr.io/mberwanger/admiral-controller:latest"
     image_templates:
-      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-amd64"
-      - "ghcr.io/mberwanger/admiral:{{ .Tag }}-arm64"
-
-  - name_template: 'mberwanger/admiral-agent:{{ .Tag }}'
-    image_templates:
-      - 'mberwanger/admiral-agent:{{ .Tag }}-amd64'
-      - 'mberwanger/admiral-agent:{{ .Tag }}-arm64'
-  - name_template: "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}"
-    image_templates:
-      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-amd64"
-      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-arm64"
-  - name_template: 'mberwanger/admiral-agent:latest'
-    image_templates:
-      - 'mberwanger/admiral-agent:{{ .Tag }}-amd64'
-      - 'mberwanger/admiral-agent:{{ .Tag }}-arm64'
-  - name_template: "ghcr.io/mberwanger/admiral-agent:latest"
-    image_templates:
-      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-amd64"
-      - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-arm64"
+      - "ghcr.io/mberwanger/admiral-controller:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-controller:{{ .Tag }}-arm64"
 
 sboms:
   - artifacts: archive

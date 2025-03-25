@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    directory: "/agent"
+    directory: "/controller"
     schedule:
       interval: "daily"
       time: "08:00"
@@ -34,7 +34,7 @@ updates:
       include: "scope"
 
   - package-ecosystem: "npm"
-    directory: "/web/"
+    directory: "/web"
     schedule:
       interval: "daily"
       time: "08:00"

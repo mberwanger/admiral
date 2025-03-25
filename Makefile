@@ -84,31 +84,31 @@ web-test: bun-install
 web-verify: bun-install
 	bun run --cwd web lint:packages
 
-.PHONY: preflight-checks-agent
-preflight-checks-agent:
-	@tools/preflight-checks.sh agent
+.PHONY: preflight-checks-controller
+preflight-checks-controller:
+	@tools/preflight-checks.sh controller
 
-.PHONY: agent # Build the agent.
-agent: preflight-checks-agent
-	cd agent && go build -o ../build/agent
+.PHONY: controller # Build the controller.
+controller: preflight-checks-controller
+	cd controller && go build -o ../build/controller
 
-.PHONY: agent-lint # Lint the agent code.
-agent-lint: preflight-checks-agent
+.PHONY: controller-lint # Lint the controller code.
+controller-lint: preflight-checks-controller
 	tools/golangci-lint.sh run --timeout 2m30s
 
-.PHONY: agent-lint-fix # Lint and fix the agent code.
-agent-lint-fix:
+.PHONY: controller-lint-fix # Lint and fix the controller code.
+controller-lint-fix:
 	tools/golangci-lint.sh run --fix
-	cd agent && go mod tidy
+	cd controller && go mod tidy
 
-.PHONY: agent-test # Run unit tests for the agent code.
-agent-test: preflight-checks-agent
-	cd agent && go test -race -covermode=atomic ./...
+.PHONY: controller-test # Run unit tests for the controller code.
+controller-test: preflight-checks-controller
+	cd controller && go test -race -covermode=atomic ./...
 
 .PHONY: server-verify # Verify go modules' requirements files are clean.
-agent-verify:
-	cd agent && go mod tidy
-	tools/ensure-no-diff.sh agent
+controller-verify:
+	cd controller && go mod tidy
+	tools/ensure-no-diff.sh controller
 
 .PHONY: bun-install # Install web dependencies.
 bun-install:

@@ -64,7 +64,7 @@ check_go() {
   fi
 }
 
-agent() {
+controller() {
   check_go
 }
 
@@ -87,19 +87,20 @@ web() {
 
 main() {
   echo "Running pre-flight checks..."
+
   # always check OS level requirements
   check_os
 
   if [ $# -ge 1 ] && [ -n "$1" ]; then
-    if [ "$1" == "agent" ]; then
-      agent
+    if [ "$1" == "controller" ]; then
+      controller
     elif [ "$1" == "server" ]; then
       server
     elif [ "$1" == "web" ]; then
       web
     fi
   else
-    agent
+    controller
     server
     web
   fi
