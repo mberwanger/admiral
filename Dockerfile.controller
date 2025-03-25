@@ -8,7 +8,7 @@ COPY ./client ./client
 COPY ./tools/preflight-checks.sh ./tools/preflight-checks.sh
 COPY ./Makefile .
 
-RUN make agent
+RUN make controller
 
 # Copy binary to final image
 FROM gcr.io/distroless/base-debian12
