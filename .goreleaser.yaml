@@ -214,9 +214,6 @@ docker_manifests:
       - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-amd64"
       - "ghcr.io/mberwanger/admiral-agent:{{ .Tag }}-arm64"
 
-sboms:
-  - artifacts: archive
-
 release:
   footer: |
     **Full Changelog**: https://github.com/mberwanger/admiral/compare/{{ .PreviousTag }}...{{ .Tag }}
