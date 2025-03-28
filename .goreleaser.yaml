@@ -50,7 +50,7 @@ builds:
     dir: server
     hooks:
       pre:
-        - cmd: go run cmd/assets/generate.go ../web/build
+        - cmd: CGO_ENABLED=0 go run cmd/assets/generate.go ../web/build
           dir: server
           output: true
     flags:
@@ -100,7 +100,8 @@ changelog:
 
 archives:
   - id: admiral
-    builds: [admiral]
+    ids:
+      - admiral
     formats: [tar.gz]
     name_template: >-
       {{ .ProjectName }}-v{{ .Version }}_{{ .Os }}_
@@ -115,7 +116,8 @@ archives:
       - README.md
       - LICENSE
   - id: admiral-server
-    builds: [admiral-server]
+    ids:
+     - admiral-server
     formats: [tar.gz]
     name_template: >-
       {{ .ProjectName }}-server-v{{ .Version }}_{{ .Os }}_
