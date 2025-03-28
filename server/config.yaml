@@ -20,14 +20,23 @@ server:
     reporter_type: prometheus
 handlers: {}
 services:
-  database:
-    host: 127.0.0.1
-    port: 5432
-    database_name: admiral
-    user: admiral
-    password: secret
-    ssl_mode: disable
+  postgres:
+    host: ${POSTGRES_HOST}
+    port: ${POSTGRES_PORT}
+    database_name: ${POSTGRES_DATABASE_NAME}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    ssl_mode: ${POSTGRES_SSL_MODE}
   authn:
     issuer: ${OAUTH2_ISSUER}
     client_id:  ${OAUTH2_CLIENT_ID}
     client_secret:  ${OAUTH2_CLIENT_SECRET}
+    scopes:
+      - openid
+      - profile
+      - email
+#    claim_mapping:
+#      preferred_username: other_user_name
+#      email: mail
+#      groups: "cognito:groups"
+

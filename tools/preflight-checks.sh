@@ -64,15 +64,7 @@ check_go() {
   fi
 }
 
-controller() {
-  check_go
-}
-
-server() {
-  check_go
-}
-
-web() {
+check_bun() {
   if ! command -v bun --version &> /dev/null; then
     echo "bun is not installed or cannot be found in the current PATH, this is a required dependency."
     did_checks_pass=false
@@ -92,17 +84,14 @@ main() {
   check_os
 
   if [ $# -ge 1 ] && [ -n "$1" ]; then
-    if [ "$1" == "controller" ]; then
-      controller
-    elif [ "$1" == "server" ]; then
-      server
-    elif [ "$1" == "web" ]; then
-      web
+    if [ "$1" == "go" ]; then
+      check_go
+    elif [ "$1" == "bun" ]; then
+      check_bun
     fi
   else
-    controller
-    server
-    web
+    check_go
+    check_bun
   fi
 
   if [ "$did_checks_pass" = false ] ; then

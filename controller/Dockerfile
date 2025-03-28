@@ -5,6 +5,7 @@ WORKDIR /app
 
 COPY ./controller ./controller
 COPY ./client ./client
+COPY ./server ./server
 COPY ./tools/preflight-checks.sh ./tools/preflight-checks.sh
 COPY ./Makefile .
 
@@ -15,6 +16,6 @@ FROM gcr.io/distroless/base-debian12
 
 WORKDIR /app
 
-COPY --from=gobuild /app/build/controller /app
+COPY --from=gobuild /app/build/admiral-controller /app
 
-CMD ["/app/controller"]
+CMD ["/app/admiral-controller"]

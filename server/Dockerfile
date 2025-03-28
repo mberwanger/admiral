@@ -35,10 +35,10 @@ EXPOSE 8080
 
 WORKDIR /app
 
-COPY --from=gobuild /app/build/server /app
+COPY --from=gobuild /app/build/admiral-server /app
 COPY ./server/config.yaml /app
 
-CMD ["/app/server"]
+CMD ["/app/admiral-server"]
 
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD curl -f http://localhost:8080/health || exit 1

@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"os"
 
-	"github.com/mberwanger/admiral/server/cmd/app"
+	"github.com/mberwanger/admiral/cli/cmd"
 	"github.com/mberwanger/admiral/server/version"
 )
 
@@ -12,7 +12,7 @@ import (
 var asciiArt string
 
 func main() {
-	app.Execute(
+	cmd.Execute(
 		buildInfo(),
 		os.Exit,
 		os.Args[1:],

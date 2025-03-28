@@ -58,7 +58,7 @@ func newRootCmd(version version.Info, exit func(int)) *rootCmd {
 	}
 
 	cmd := &cobra.Command{
-		Use:               "server",
+		Use:               "admiral- server",
 		Short:             "Admiral - Platform Orchestrator that helps developers build, deploy, and manage their applications",
 		Version:           version.String(),
 		SilenceUsage:      true,
