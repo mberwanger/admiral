@@ -1,7 +1,6 @@
 module github.com/mberwanger/admiral/server
 
 go 1.24.1
-
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250307204501-0409229c3780.1
 	github.com/bufbuild/protovalidate-go v0.9.2
@@ -17,7 +16,7 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/uber-go/tally/v4 v4.1.16
 	go.uber.org/zap v1.27.0
-	golang.org/x/net v0.37.0
+	golang.org/x/net v0.38.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20250324211829-b45e905df463
 	google.golang.org/grpc v1.71.0
 	google.golang.org/protobuf v1.36.6
