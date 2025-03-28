@@ -14,11 +14,11 @@ permissions:
   attestations: write
 
 jobs:
-  build:
+  build-artifacts:
     runs-on: ubuntu-latest
     steps:
       - if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
-        run: echo "flags=--snapshot --skip=validate" >> $GITHUB_ENV
+        run: echo "flags=--snapshot" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
@@ -34,15 +34,13 @@ jobs:
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@90a3faa9d0182683851fbfa97ca1a2cb983bfca3 # v6.2.1
         with:
-          args: build --parallelism 2 --clean ${{ env.flags }}
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: goreleaser-build
-          path: dist
+          distribution: goreleaser
+          args: release --clean --parallelism 2 ${{ env.flags }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
-  release:
-    needs: [build]
+  build-containers:
+    needs: [build-artifacts]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -74,9 +72,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GH_PAT }}
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: goreleaser-build
-          path: dist
 
+  attest:
+    needs: [build-artifacts]
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2
+        with:
+          subject-checksums: ./dist/checksums.txt
