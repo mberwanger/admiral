@@ -14,59 +14,44 @@ permissions:
   attestations: write
 
 jobs:
-  goreleaser:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64]
     steps:
       - if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
-        run: echo "flags=--snapshot" >> $GITHUB_ENV
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        run: echo "flags=--snapshot --skip=validate" >> $GITHUB_ENV
+      - if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: echo "flags=--clean" >> $GITHUB_ENV
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           fetch-depth: 0
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-          key: ${{ runner.os }}-go-${{ hashFiles('server/go.mod', 'server/go.sum') }}
-          restore-keys: ${{ runner.os }}-go-
       - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
         with:
           go-version-file: "server/go.mod"
-      - uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
-      - uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
-      - uses: actions/cache@v4
+      - uses: goreleaser/goreleaser-action@90a3faa9d0182683851fbfa97ca1a2cb983bfca3
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-buildx-
-      - uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GH_PAT }}
-      - uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
-        with:
-          registry: docker.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
-      - name: Install Syft
-        uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
-      - name: Install Bun
-        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
-        with:
-          bun-version: latest
-      - name: Install UPX
-        uses: crazy-max/ghaction-upx@de21b8cbed76979407eeb6e41aa5e270afc3225c # v3.1.0
-        with:
-          install-only: true
-      - uses: goreleaser/goreleaser-action@90a3faa9d0182683851fbfa97ca1a2cb983bfca3 # v6.2.1
-        with:
-          distribution: goreleaser
-          args: release --parallelism 2 ${{ env.flags }}
+          args: build --single-target ${{ env.flags }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-      - uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
-        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          GOOS: ${{ matrix.platform == 'linux/amd64' && 'linux' || 'linux' }}
+          GOARCH: ${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
+      - uses: actions/upload-artifact@v4
         with:
-          subject-checksums: ./dist/checksums.txt
+          name: go-build-${{ matrix.platform }}
+          path: build
+
+  release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
+        with:
+          go-version-file: "server/go.mod"
+
