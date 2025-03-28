@@ -34,8 +34,9 @@ jobs:
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@90a3faa9d0182683851fbfa97ca1a2cb983bfca3 # v6.2.1
         with:
-          args: build --clean ${{ env.flags }}
-      - uses: actions/upload-artifact@v4
+          args: build --parallelism 2 --clean ${{ env.flags }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: goreleaser-build
           path: dist
@@ -51,12 +52,31 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           fetch-depth: 0
-      - name: Install Go
-        uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+      - name: Cache Docker layers
+        uses: actions/cache@v4
         with:
-          go-version-file: "server/go.mod"
-      - name: Install Bun
-        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile', '.goreleaser.yaml') }}
+          restore-keys: ${{ runner.os }}-buildx-
+      - name: Login to Docker hub
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
-          bun-version: latest
+          registry: docker.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Login to GitHub container registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_PAT }}
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: goreleaser-build
+          path: dist
 
