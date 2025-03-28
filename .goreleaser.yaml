@@ -50,8 +50,6 @@ builds:
     dir: server
     hooks:
       pre:
-        - cmd: echo $GOOS
-          output: true
         - cmd: go run cmd/assets/generate.go ../web/build
           dir: server
           output: true
