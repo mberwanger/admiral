@@ -51,21 +51,22 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.component.name }}
-          tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha
-          labels: |
-            io.artifacthub.package.maintainers=[{"name":"Admiral","email":"support@admiral.io"}]
-            io.artifacthub.package.license=Apache-2.0
-            org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily.
-            org.opencontainers.image.created=${{ github.event.repository.updated_at }}
-            org.opencontainers.image.name=${{ matrix.component.name }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ github.ref_name }}
-            org.opencontainers.image.source=${{ github.repository_url }}
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.component.name }}
+#          images: |
+#            ghcr.io/${{ github.repository_owner }}/${{ matrix.component.name }}
+#          tags: |
+#            type=semver,pattern={{version}}
+#            type=semver,pattern={{major}}.{{minor}}
+#            type=sha
+#          labels: |
+#            io.artifacthub.package.maintainers=[{"name":"Admiral","email":"support@admiral.io"}]
+#            io.artifacthub.package.license=Apache-2.0
+#            org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily.
+#            org.opencontainers.image.created=${{ github.event.repository.updated_at }}
+#            org.opencontainers.image.name=${{ matrix.component.name }}
+#            org.opencontainers.image.revision=${{ github.sha }}
+#            org.opencontainers.image.version=${{ github.ref_name }}
+#            org.opencontainers.image.source=${{ github.repository_url }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
@@ -109,6 +110,12 @@ jobs:
         # - admiral-controller
         # - admiral-server
     steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
       - name: Login to GitHub Container Registry
@@ -128,7 +135,22 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-      - name: Create Multi-Arch Manifests
-        run: |
-          docker buildx imagetools create \
-            -t ${{ steps.meta.outputs.tags }} ${{ steps.meta.outputs.tags }}-amd64 ${{ steps.meta.outputs.tags }}-arm64
+          labels: |
+            io.artifacthub.package.maintainers=[{"name":"Admiral","email":"support@admiral.io"}]
+            io.artifacthub.package.license=Apache-2.0
+            org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily.
+            org.opencontainers.image.created=${{ github.event.repository.updated_at }}
+            org.opencontainers.image.name=${{ matrix.component }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ github.ref_name }}
+            org.opencontainers.image.source=${{ github.repository_url }}
+#      - name: Create manifest list and push
+#        working-directory: ${{ runner.temp }}/digests
+#        run: |
+#          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+#            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+
+#      - name: Create Multi-Arch Manifests
+#        run: |
+#          docker buildx imagetools create \
+#            -t ${{ steps.meta.outputs.tags }} ${{ steps.meta.outputs.tags }}-amd64 ${{ steps.meta.outputs.tags }}-arm64
