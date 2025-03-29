@@ -1,4 +1,4 @@
-name: misspell
+name: Misspell
 
 on:
   push:

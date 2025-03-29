@@ -1,4 +1,4 @@
-name: artifacts
+name: Release Binaries
 
 on:
   push:

@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    directory: "/controller"
+    directory: "cli"
     schedule:
       interval: "daily"
       time: "08:00"
@@ -12,7 +12,7 @@ updates:
       include: "scope"
 
   - package-ecosystem: "gomod"
-    directory: "/client"
+    directory: "controller"
     schedule:
       interval: "daily"
       time: "08:00"
@@ -23,7 +23,18 @@ updates:
       include: "scope"
 
   - package-ecosystem: "gomod"
-    directory: "/server"
+    directory: "client"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  - package-ecosystem: "gomod"
+    directory: "server"
     schedule:
       interval: "daily"
       time: "08:00"
@@ -34,7 +45,7 @@ updates:
       include: "scope"
 
   - package-ecosystem: "npm"
-    directory: "/web"
+    directory: "web"
     schedule:
       interval: "daily"
       time: "08:00"
