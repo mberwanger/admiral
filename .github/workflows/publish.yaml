@@ -52,21 +52,6 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository_owner }}/${{ matrix.component.name }}
-#          images: |
-#            ghcr.io/${{ github.repository_owner }}/${{ matrix.component.name }}
-#          tags: |
-#            type=semver,pattern={{version}}
-#            type=semver,pattern={{major}}.{{minor}}
-#            type=sha
-#          labels: |
-#            io.artifacthub.package.maintainers=[{"name":"Admiral","email":"support@admiral.io"}]
-#            io.artifacthub.package.license=Apache-2.0
-#            org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily.
-#            org.opencontainers.image.created=${{ github.event.repository.updated_at }}
-#            org.opencontainers.image.name=${{ matrix.component.name }}
-#            org.opencontainers.image.revision=${{ github.sha }}
-#            org.opencontainers.image.version=${{ github.ref_name }}
-#            org.opencontainers.image.source=${{ github.repository_url }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
@@ -81,7 +66,6 @@ jobs:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.component.name }}
-          #tags: ${{ steps.meta.outputs.tags }}-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
@@ -114,7 +98,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ${{ runner.temp }}/digests
-          pattern: digests-*
+          pattern: digests-${{ matrix.component }}-*
           merge-multiple: true
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
