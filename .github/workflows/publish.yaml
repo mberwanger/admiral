@@ -97,11 +97,11 @@ jobs:
         run: |
           for component in admiral admiral-controller admiral-server; do
             docker buildx imagetools create \
-              -t ghcr.io/${{ github.repository }}/${component}:${{ github.ref_name }} \
-              ghcr.io/${{ github.repository }}/${component}:${{ github.ref_name }}-amd64 \
-              ghcr.io/${{ github.repository }}/${component}:${{ github.ref_name }}-arm64
+              -t ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }} \
+              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-amd64 \
+              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-arm64
             docker buildx imagetools create \
-              -t ghcr.io/${{ github.repository }}/${component}:latest \
-              ghcr.io/${{ github.repository }}/${component}:${{ github.ref_name }}-amd64 \
-              ghcr.io/${{ github.repository }}/${component}:${{ github.ref_name }}-arm64
+              -t ghcr.io/${{ github.repository_owner }}/${component}:latest \
+              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-amd64 \
+              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-arm64
           done
