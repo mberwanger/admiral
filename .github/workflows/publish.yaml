@@ -44,7 +44,7 @@ jobs:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ matrix.platform }}-${{ hashFiles(matrix.component.file) }}
           restore-keys: ${{ runner.os }}-buildx-${{ matrix.platform }}-
-      - name: Docker meta
+      - name: Docker Meta
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -76,14 +76,18 @@ jobs:
           file: ${{ matrix.component.file }}
           platforms: ${{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
-          labels: ${{ steps.meta.outputs.labels }}
 
   publish:
     if: github.actor != 'dependabot[bot]'
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        component: [admiral]
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
@@ -93,15 +97,34 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GH_PAT }}
+      - name: Docker Meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
       - name: Create Multi-Arch Manifests
         run: |
-          for component in admiral admiral-controller admiral-server; do
-            docker buildx imagetools create \
-              -t ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }} \
-              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-amd64 \
-              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-arm64
-            docker buildx imagetools create \
-              -t ghcr.io/${{ github.repository_owner }}/${component}:latest \
-              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-amd64 \
-              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-arm64
-          done
+          docker buildx imagetools create \
+            -t ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}:${{ steps.meta.outputs.tags }} \
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}:${{ steps.meta.outputs.tags }}-amd64 \
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}:${{ steps.meta.outputs.tags }}-arm64
+          docker buildx imagetools create \
+            -t ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}:latest \
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}:${{ steps.meta.outputs.tags }}-amd64 \
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}:${{ steps.meta.outputs.tags }}-arm64
+
+#        run: |
+#          for component in admiral admiral-controller admiral-server; do
+#            docker buildx imagetools create \
+#              -t ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }} \
+#              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-amd64 \
+#              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-arm64
+#            docker buildx imagetools create \
+#              -t ghcr.io/${{ github.repository_owner }}/${component}:latest \
+#              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-amd64 \
+#              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-arm64
+#          done
