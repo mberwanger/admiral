@@ -23,6 +23,14 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           fetch-depth: 0
+      - name: Cache Go Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('cli/go.mod', 'cli/go.sum', 'controller/go.mod', 'controller/go.sum', 'server/go.mod', 'server/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
       - name: Install Go
         uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
         with:
