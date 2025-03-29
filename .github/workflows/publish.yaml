@@ -25,10 +25,10 @@ jobs:
         component:
           - name: admiral
             file: cli/Dockerfile
-          - name: admiral-controller
-            file: controller/Dockerfile
-          - name: admiral-server
-            file: server/Dockerfile
+#          - name: admiral-controller
+#            file: controller/Dockerfile
+#          - name: admiral-server
+#            file: server/Dockerfile
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -48,7 +48,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}/${{ matrix.component }}
+          images: ghcr.io/${{ github.repository }}/${{ matrix.component.name }}
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
