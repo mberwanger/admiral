@@ -1,0 +1,90 @@
+name: release
+
+on:
+  pull_request: {}
+  push:
+    branches:
+      - master
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+  id-token: write
+  packages: write
+  attestations: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+        component:
+          - name: admiral
+            file: cli/Dockerfile
+          - name: admiral-controller
+            file: controller/Dockerfile
+          - name: admiral-server
+            file: server/Dockerfile
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ matrix.platform }}-${{ hashFiles(matrix.component.file) }}
+          restore-keys: ${{ runner.os }}-buildx-${{ matrix.platform }}-
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/${{ matrix.component }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+          labels: |
+            io.artifacthub.package.maintainers=[{"name":"Admiral","email":"support@admiral.io"}]
+            io.artifacthub.package.license=Apache-2.0
+            org.opencontainers.image.description=Platform Orchestrator that helps developers build, deploy, and manage their applications more quickly and easily.
+            org.opencontainers.image.created=${{ github.event.repository.updated_at }}
+            org.opencontainers.image.name=${{ matrix.component.name }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ github.ref_name }}
+            org.opencontainers.image.source=${{ github.repository_url }}
+      - name: Login to GitHub container registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_PAT }}
+      - name: Build and Push - ${{ matrix.component.name }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.component.file }}
+          platforms: ${{ matrix.platform }}
+          tags: ${{ steps.meta.outputs.tags }}-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+          labels: ${{ steps.meta.outputs.labels }}
+
+
+#      - name: Create manifest list and push
+#        working-directory: ${{ runner.temp }}/digests
+#        run: |
+#          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+#            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+#
+#      - name: Inspect image
+#        run: |
+#          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
