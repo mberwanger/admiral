@@ -11,7 +11,29 @@ updates:
       prefix: "chore"
       include: "scope"
 
+  - package-ecosystem: "docker"
+    directory: "cli"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
   - package-ecosystem: "gomod"
+    directory: "controller"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  - package-ecosystem: "docker"
     directory: "controller"
     schedule:
       interval: "daily"
@@ -33,7 +55,29 @@ updates:
       prefix: "chore"
       include: "scope"
 
+  - package-ecosystem: "docker"
+    directory: "client"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
   - package-ecosystem: "gomod"
+    directory: "server"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  - package-ecosystem: "docker"
     directory: "server"
     schedule:
       interval: "daily"
@@ -66,13 +110,3 @@ updates:
       prefix: "chore"
       include: "scope"
 
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "daily"
-      time: "08:00"
-    labels:
-      - "dependencies"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
