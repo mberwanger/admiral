@@ -118,6 +118,4 @@ jobs:
       - name: Create Multi-Arch Manifests
         run: |
           docker buildx imagetools create \
-            -t ${{ steps.meta.outputs.tags }} \
-            ghcr.io/${{ github.repository }}/${{ matrix.component }}:${{ github.ref_name }}-amd64 \
-            ghcr.io/${{ github.repository }}/${{ matrix.component }}:${{ github.ref_name }}-arm64
+            -t ${{ steps.meta.outputs.tags }} ${{ steps.meta.outputs.tags }}-amd64 ${{ steps.meta.outputs.tags }}-arm64
