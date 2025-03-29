@@ -1,7 +1,9 @@
 name: Publish Containers
 
 on:
-  pull_request: {}
+  pull_request:
+    branches:
+      - master
   push:
     branches:
       - master
@@ -25,30 +27,32 @@ jobs:
         component:
           - name: admiral
             file: cli/Dockerfile
-#          - name: admiral-controller
-#            file: controller/Dockerfile
-#          - name: admiral-server
-#            file: server/Dockerfile
+          # Uncomment to re-enable:
+          # - name: admiral-controller
+          #   file: controller/Dockerfile
+          # - name: admiral-server
+          #   file: server/Dockerfile
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
       - name: Set up QEMU
         uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
-      - name: Cache Docker layers
+      - name: Cache Docker Layers
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ matrix.platform }}-${{ hashFiles(matrix.component.file) }}
-          restore-keys: ${{ runner.os }}-buildx-${{ matrix.platform }}-
-      - name: Docker Meta
+          key: ${{ runner.os }}-buildx-${{ matrix.platform }}-${{ matrix.component.name }}-${{ hashFiles(matrix.component.file) }}
+          restore-keys: ${{ runner.os }}-buildx-${{ matrix.platform }}-${{ matrix.component.name }}-
+      - name: Docker Metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.component.name }}
+          images: |
+            ghcr.io/${{ github.repository }}/${{ matrix.component.name }}
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -62,65 +66,58 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ github.ref_name }}
             org.opencontainers.image.source=${{ github.repository_url }}
-      - name: Login to GitHub container registry
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GH_PAT }}
-      - name: Build and Push - ${{ matrix.component.name }}
+      - name: Build and Push ${{ matrix.component.name }}
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
           file: ${{ matrix.component.file }}
           platforms: ${{ matrix.platform }}
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
 
   publish:
-    if: github.actor != 'dependabot[bot]'
+    if: ${{ github.actor != 'dependabot[bot]' && github.event_name != 'pull_request' }}
     needs: build
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         component: [admiral]
+        # Uncomment to re-enable:
+        # - admiral-controller
+        # - admiral-server
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
-      - name: Login to GitHub container registry
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GH_PAT }}
-      - name: Docker Meta
+      - name: Docker Metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}
+          images: |
+            ghcr.io/${{ github.repository }}/${{ matrix.component }}
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
       - name: Create Multi-Arch Manifests
         run: |
-          docker buildx imagetools create -t ${{ steps.meta.outputs.tags }} \
-            ${{ steps.meta.outputs.tags }}-amd64 ${{ steps.meta.outputs.tags }}-arm64
-          docker buildx imagetools create -t ghcr.io/${{ github.repository_owner }}/${{ matrix.component }}:latest \
-            ${{ steps.meta.outputs.tags }}-amd64 ${{ steps.meta.outputs.tags }}-arm64
-
-#        run: |
-#          for component in admiral admiral-controller admiral-server; do
-#            docker buildx imagetools create \
-#              -t ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }} \
-#              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-amd64 \
-#              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-arm64
-#            docker buildx imagetools create \
-#              -t ghcr.io/${{ github.repository_owner }}/${component}:latest \
-#              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-amd64 \
-#              ghcr.io/${{ github.repository_owner }}/${component}:${{ github.ref_name }}-arm64
-#          done
+          docker buildx imagetools create \
+            -t ${{ steps.meta.outputs.tags }} \
+            ghcr.io/${{ github.repository }}/${{ matrix.component }}:${{ github.ref_name }}-amd64 \
+            ghcr.io/${{ github.repository }}/${{ matrix.component }}:${{ github.ref_name }}-arm64
