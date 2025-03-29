@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   build:
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -71,6 +72,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          push: true
           file: ${{ matrix.component.file }}
           platforms: ${{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
@@ -79,6 +81,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   publish:
+    if: github.actor != 'dependabot[bot]'
     needs: build
     runs-on: ubuntu-latest
     steps:
