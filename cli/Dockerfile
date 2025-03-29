@@ -12,7 +12,7 @@ COPY ./Makefile .
 RUN make cli
 
 # Copy binary to final image
-FROM alpine:3.19
+FROM alpine:3.21
 
 RUN apk add --no-cache tini bash
 
