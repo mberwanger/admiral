@@ -1,0 +1,42 @@
+server:
+  listener:
+    address: 0.0.0.0
+    port: 8080
+  timeouts:
+    default: 30s
+  logger:
+    level: debug
+  access_log:
+    status_code_filters:
+      - 2  # Unknown
+      - 4  # DeadlineExceeded
+      - 12 # Unimplemented
+      - 14 # Unavailable
+  enable_pprof: false
+  stats:
+    flush_interval: 1s
+    go_runtime_stats:
+      collection_interval: 5s
+    reporter_type: prometheus
+handlers: {}
+services:
+  postgres:
+    host: ${POSTGRES_HOST}
+    port: ${POSTGRES_PORT}
+    database_name: ${POSTGRES_DATABASE_NAME}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    ssl_mode: ${POSTGRES_SSL_MODE}
+  authn:
+    issuer: ${OAUTH2_ISSUER}
+    client_id:  ${OAUTH2_CLIENT_ID}
+    client_secret:  ${OAUTH2_CLIENT_SECRET}
+    scopes:
+      - openid
+      - profile
+      - email
+#    claim_mapping:
+#      preferred_username: other_user_name
+#      email: mail
+#      groups: "cognito:groups"
+

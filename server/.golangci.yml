@@ -1,0 +1,36 @@
+# https://github.com/golangci/golangci-lint
+linters:
+  disable-all: true
+  enable:
+    - errcheck
+    - exportloopref
+    - gci
+    - gocritic
+    - gofmt
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - whitespace
+linters-settings:
+  gocritic:
+    disabled-checks:
+      - singleCaseSwitch
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(github.com/mberwanger/admiral/server)
+issues:
+  max-same-issues: 0
+  exclude-dirs:
+    - config/
+  exclude-rules:
+    - path: (_test\.go|mock\.go)
+      linters:
+        - gosec
+run:
+  timeout: 10m

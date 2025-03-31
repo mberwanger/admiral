@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package admiral.cluster.v1;
+
+option go_package = "go.admiral.io/admiral/server/api/cluster/v1;clusterv1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+service ClusterAPI {
+  rpc CreateCluster(CreateClusterRequest) returns (CreateClusterResponse) {
+    option (google.api.http) = {
+      post : "/api/v1/clusters"
+      body: "*"
+    };
+  }
+
+  rpc ListClusters(ListClustersRequest) returns (ListClustersResponse) {
+    option (google.api.http) = {
+      get : "/api/v1/clusters"
+    };
+  }
+
+  rpc GetCluster(GetClusterRequest) returns (GetClusterResponse) {
+    option (google.api.http) = {
+      get : "/api/v1/clusters/{id}"
+    };
+  }
+
+  rpc UpdateCluster(UpdateClusterRequest) returns (UpdateClusterResponse) {
+    option (google.api.http) = {
+      put : "/api/v1/clusters/{cluster.id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteCluster(DeleteClusterRequest) returns (DeleteClusterResponse) {
+    option (google.api.http) = {
+      delete : "/api/v1/clusters/{id}"
+    };
+  }
+}
+
+message Cluster {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 255
+  ];
+
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message CreateClusterRequest {
+  string name = 1 [
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 255
+  ];
+}
+message CreateClusterResponse {
+  Cluster cluster = 1;
+}
+
+message ListClustersRequest {
+  string filter = 1;
+  int32 page_size = 2;
+  optional string page_token = 3;
+}
+message ListClustersResponse {
+  repeated Cluster clusters = 1;
+  string next_page_token = 2;
+}
+
+message GetClusterRequest {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+}
+message GetClusterResponse {
+  Cluster cluster = 1;
+}
+
+message UpdateClusterRequest {
+  Cluster cluster = 1;
+}
+message UpdateClusterResponse {
+  Cluster cluster = 1;
+}
+
+message DeleteClusterRequest {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+}
+message DeleteClusterResponse {}

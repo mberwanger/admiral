@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package admiral.healthcheck.v1;
+
+option go_package = "go.admiral.io/admiral/server/api/healthcheck/v1;healthcheckv1";
+
+import "google/api/annotations.proto";
+
+service HealthcheckAPI {
+  rpc Healthcheck(HealthcheckRequest) returns (HealthcheckResponse) {
+    option (google.api.http) = {
+      get : "/api/v1/healthcheck"
+
+      additional_bindings : {get : "/healthcheck"}
+    };
+  }
+}
+
+message HealthcheckRequest {
+}
+message HealthcheckResponse {
+}

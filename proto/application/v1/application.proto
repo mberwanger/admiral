@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package admiral.application.v1;
+
+option go_package = "go.admiral.io/admiral/server/api/application/v1;applicationv1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+service ApplicationAPI {
+  rpc CreateApplication(CreateApplicationRequest) returns (CreateApplicationResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/applications"
+      body: "*"
+    };
+  }
+
+  rpc ListApplications(ListApplicationsRequest) returns (ListApplicationsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/applications"
+    };
+  }
+
+  rpc GetApplication(GetApplicationRequest) returns (GetApplicationResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/applications/{id}"
+    };
+  }
+
+  rpc UpdateApplication(UpdateApplicationRequest) returns (UpdateApplicationResponse) {
+    option (google.api.http) = {
+      put : "/api/v1/applications/{application.id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteApplication(DeleteApplicationRequest) returns (DeleteApplicationResponse) {
+    option (google.api.http) = {
+      delete : "/api/v1/applications/{id}"
+    };
+  }
+}
+
+message Application {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 255
+  ];
+
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message CreateApplicationRequest {
+  string name = 1 [
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 255
+  ];
+}
+message CreateApplicationResponse {
+  Application application = 1;
+}
+
+message ListApplicationsRequest {
+  string filter = 1;
+  int32 page_size = 2;
+  optional string page_token = 3;
+}
+message ListApplicationsResponse {
+  repeated Application applications = 1;
+  string next_page_token = 2;
+}
+
+message GetApplicationRequest {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+}
+message GetApplicationResponse {
+  Application application = 1;
+}
+
+message UpdateApplicationRequest {
+  Application application = 1;
+}
+message UpdateApplicationResponse {
+  Application application = 1;
+}
+
+message DeleteApplicationRequest {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+}
+message DeleteApplicationResponse {}
+
+//    srv.Post("/v1/applications", handler.CreateApplicationHandler(db))
+//    srv.Get("/v1/applications", handler.GetApplicationsHandler(db))
+//    srv.Get("/v1/applications/:aid", handler.GetApplicationHandler(db))
+//    srv.Put("/v1/applications/:aid", handler.UpdateApplicationHandler(db))
+//    srv.Delete("/v1/applications/:aid", handler.DeleteApplicationHandler(db))

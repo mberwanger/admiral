@@ -1,0 +1,147 @@
+version: 2
+
+project_name: admiral
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-dev"
+
+before:
+  hooks:
+    - make web
+
+report_sizes: true
+
+env:
+  - CGO_ENABLED=0
+
+builds:
+  - id: admiral
+    binary: admiral
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - "386"
+      - amd64
+      - arm
+      - arm64
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    dir: cli
+    flags:
+      - -tags=withAssets -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/mberwanger/admiral/server/version.version={{.Version}}
+      - -X github.com/mberwanger/admiral/server/version.commit={{.FullCommit}}
+      - -X github.com/mberwanger/admiral/server/version.date={{.Date}}
+      - -X github.com/mberwanger/admiral/server/version.builtBy=admiral
+  - id: admiral-server
+    binary: admiral-server
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - "386"
+      - amd64
+      - arm
+      - arm64
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    dir: server
+    hooks:
+      pre:
+        - cmd: go run cmd/assets/generate.go ../web/build
+          dir: server
+          output: true
+    flags:
+      - -tags=withAssets -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/mberwanger/admiral/server/version.version={{.Version}}
+      - -X github.com/mberwanger/admiral/server/version.commit={{.FullCommit}}
+      - -X github.com/mberwanger/admiral/server/version.date={{.Date}}
+      - -X github.com/mberwanger/admiral/server/version.builtBy=admiral
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^test:"
+      - "^chore"
+      - "merge conflict"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+      - go mod tidy
+  groups:
+    - title: "New Features"
+      regexp: '^feat(\([[:word:]]+\))?!?:.+$'
+      order: 100
+    - title: "Security Updates"
+      regexp: '^sec(\([[:word:]]+\))?!?:.+$'
+      order: 150
+    - title: "Bug Fixes"
+      regexp: '^fix(\([[:word:]]+\))?!?:.+$'
+      order: 200
+    - title: "Dependency Updates"
+      regexp: '^(feat|fix)\(deps\)!?:.+$'
+      order: 300
+    - title: "Documentation Updates"
+      regexp: '^doc(\([[:word:]]+\))?!?:.+$'
+      order: 400
+    - title: "Build Process Updates"
+      regexp: '^build(\([[:word:]]+\))?!?:.+$'
+      order: 410
+    - title: "Other Changes"
+      order: 9999
+
+archives:
+  - id: admiral
+    ids:
+      - admiral
+    formats: [tar.gz]
+    name_template: >-
+      {{ .ProjectName }}-v{{ .Version }}_{{ .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - README.md
+      - LICENSE
+  - id: admiral-server
+    ids:
+     - admiral-server
+    formats: [tar.gz]
+    name_template: >-
+      {{ .ProjectName }}-server-v{{ .Version }}_{{ .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - README.md
+      - LICENSE
+      - src: "server/config.yaml"
+        dst: "config.yaml"
+
+sboms:
+  - artifacts: archive
+
+release:
+  footer: |
+    **Full Changelog**: https://github.com/mberwanger/admiral/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+    ## Helping out
+    This release ({{ .Version }}) was built on {{ .Date }} by {{ .Env.USER }}.
+    Thanks to **all** the awesome people who made it possible!
+
