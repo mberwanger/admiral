@@ -11,12 +11,12 @@ import (
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 
-	clusterv1 "go.admiral.io/admiral/server/api/cluster/v1"
-	"go.admiral.io/admiral/server/config"
-	"go.admiral.io/admiral/server/endpoint"
-	"go.admiral.io/admiral/server/model"
-	"go.admiral.io/admiral/server/service"
-	"go.admiral.io/admiral/server/service/database"
+	clusterv1 "go.admiral.io/admiral/api/cluster/v1"
+	"go.admiral.io/admiral/internal/config"
+	"go.admiral.io/admiral/internal/endpoint"
+	"go.admiral.io/admiral/internal/model"
+	"go.admiral.io/admiral/internal/service"
+	"go.admiral.io/admiral/internal/service/database"
 )
 
 const Name = "endpoint.cluster"

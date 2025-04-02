@@ -6,9 +6,9 @@ import (
 	"github.com/uber-go/tally/v4"
 	"go.uber.org/zap"
 
-	healthcheckv1 "go.admiral.io/admiral/server/api/healthcheck/v1"
-	"go.admiral.io/admiral/server/config"
-	"go.admiral.io/admiral/server/endpoint"
+	healthcheckv1 "go.admiral.io/admiral/api/healthcheck/v1"
+	"go.admiral.io/admiral/internal/config"
+	"go.admiral.io/admiral/internal/endpoint"
 )
 
 const Name = "endpoint.healthcheck"
