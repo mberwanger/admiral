@@ -33,7 +33,7 @@ verify: server-verify web-verify proto-verify
 
 .PHONY: clean # Remove build and cache artifacts.
 clean:
-	rm -rf build .air cmd/assets/generated_assets.go web/build web/node_modules
+	rm -rf build cmd/assets/generated_assets.go web/build web/node_modules
 
 .PHONY: proto # Generate proto assets.
 proto:
@@ -69,15 +69,15 @@ server-lint: preflight-checks-go
 .PHONY: server-lint-fix # Lint and fix the server code.
 server-lint-fix: preflight-checks-go
 	tools/golangci-lint.sh run --fix
-	cd server && go mod tidy
+	go mod tidy
 
 .PHONY: server-test # Run unit tests for the server code.
 server-test: preflight-checks-go
-	cd server && go test -race -covermode=atomic ./...
+	go test -race -covermode=atomic ./...
 
 .PHONY: server-verify # Verify go modules' requirements files are clean.
 server-verify: preflight-checks-go
-	cd server && go mod tidy
+	go mod tidy
 	tools/ensure-no-diff.sh server
 
 .PHONY: web # Build production web assets.

@@ -42,7 +42,6 @@ ensure_fd() {
   fi
 }
 
-cd "${REPO_ROOT}/server"
 ensure_binary
 ensure_fd
 
