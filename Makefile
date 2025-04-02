@@ -37,7 +37,7 @@ clean:
 
 .PHONY: proto # Generate proto assets.
 proto:
-	rm -rf api web/src/api && ./tools/buf.sh generate --clean
+	./tools/buf.sh generate --clean
 
 .PHONY: proto-lint # Lint the generated proto assets.
 proto-lint:

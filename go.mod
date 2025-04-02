@@ -4,6 +4,7 @@ go 1.24.1
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250307204501-0409229c3780.1
+	connectrpc.com/connect v1.18.1
 	github.com/bufbuild/protovalidate-go v0.9.3-0.20250317160558-38a17488914d
 	github.com/caarlos0/go-version v0.2.0
 	github.com/go-playground/validator/v10 v10.26.0
