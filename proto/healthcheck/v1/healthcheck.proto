@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package admiral.healthcheck.v1;
 
-option go_package = "go.admiral.io/admiral/server/api/healthcheck/v1;healthcheckv1";
+option go_package = "go.admiral.io/admiral/api/healthcheck/v1;healthcheckv1";
 
 import "google/api/annotations.proto";
 
@@ -16,7 +16,5 @@ service HealthcheckAPI {
   }
 }
 
-message HealthcheckRequest {
-}
-message HealthcheckResponse {
-}
+message HealthcheckRequest {}
+message HealthcheckResponse {}

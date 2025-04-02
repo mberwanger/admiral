@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package admiral.application.v1;
 
-option go_package = "go.admiral.io/admiral/server/api/application/v1;applicationv1";
+option go_package = "go.admiral.io/admiral/api/application/v1;applicationv1";
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package admiral.cluster.v1;
 
-option go_package = "go.admiral.io/admiral/server/api/cluster/v1;clusterv1";
+option go_package = "go.admiral.io/admiral/api/cluster/v1;clusterv1";
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
