@@ -54,6 +54,22 @@ services:
       postgres:
         condition: service_healthy
 
+  mailpit:
+    container_name: mailpit
+    image: axllent/mailpit:latest
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    healthcheck:
+      test: /usr/bin/nc -v localhost 1025
+      interval: 30s
+    networks:
+      - admiral-network
+    ports:
+      - 8025:8025
+      - 1025:1025
+
 volumes:
   db:
     driver: local

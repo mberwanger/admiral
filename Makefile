@@ -1,9 +1,15 @@
-SHELL:=/usr/bin/env bash
-.DEFAULT_GOAL:=all
+# Use bash as the shell, with environment lookup
+SHELL := /usr/bin/env bash
 
-MAKEFLAGS += --no-print-directory
+.DEFAULT_GOAL := all
 
-PROJECT_ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+MAKEFLAGS += --no-print-directory --silent
+
+VERSION ?= 0.0.0
+COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+DATE ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+BUILT_BY ?= $(shell whoami)
+PROJECT_ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 .PHONY: help # Print this help message.
 help:
@@ -27,9 +33,7 @@ verify: server-verify web-verify proto-verify
 
 .PHONY: clean # Remove build and cache artifacts.
 clean:
-	rm -rf build
-	cd server && rm -rf .air && rm cmd/assets/generated_assets.go
-	cd web && rm -rf build node_modules
+	rm -rf build cmd/assets/generated_assets.go dist web/build web/node_modules
 
 .PHONY: proto # Generate proto assets.
 proto:
@@ -46,11 +50,13 @@ proto-verify:
 
 .PHONY: server # Build the standalone server.
 server: preflight-checks-go
-	cd server && go build -o ../build/admiral-server
+	go build -o ./build/admiral-server \
+		-ldflags="-s -w -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DATE) -X main.builtBy=$(BUILT_BY)"
 
 .PHONY: server-with-assets # Build the server with web assets.
 server-with-assets: preflight-checks-go
-	cd server && go run cmd/assets/generate.go ../web/build && go build -tags withAssets -o ../build/admiral-server
+	go run cmd/assets/generate.go ./web/build && go build -tags withAssets -o ./build/admiral-server \
+		-ldflags="-s -w -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DATE) -X main.builtBy=$(BUILT_BY)"
 
 .PHONY: server-dev # Start the server in development mode.
 server-dev: preflight-checks-go
@@ -63,15 +69,15 @@ server-lint: preflight-checks-go
 .PHONY: server-lint-fix # Lint and fix the server code.
 server-lint-fix: preflight-checks-go
 	tools/golangci-lint.sh run --fix
-	cd server && go mod tidy
+	go mod tidy
 
 .PHONY: server-test # Run unit tests for the server code.
 server-test: preflight-checks-go
-	cd server && go test -race -covermode=atomic ./...
+	go test -race -covermode=atomic ./...
 
 .PHONY: server-verify # Verify go modules' requirements files are clean.
 server-verify: preflight-checks-go
-	cd server && go mod tidy
+	go mod tidy
 	tools/ensure-no-diff.sh server
 
 .PHONY: web # Build production web assets.

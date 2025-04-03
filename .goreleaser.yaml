@@ -1,41 +1,14 @@
 version: 2
-
-project_name: admiral
-
+project_name: admiral-server
 snapshot:
   version_template: "{{ incpatch .Version }}-dev"
-
 before:
   hooks:
     - make web
-
 report_sizes: true
-
 env:
   - CGO_ENABLED=0
-
 builds:
-  - id: admiral
-    binary: admiral
-    goos:
-      - linux
-      - darwin
-      - windows
-    goarch:
-      - "386"
-      - amd64
-      - arm
-      - arm64
-    mod_timestamp: "{{ .CommitTimestamp }}"
-    dir: cli
-    flags:
-      - -tags=withAssets -trimpath
-    ldflags:
-      - -s -w
-      - -X github.com/mberwanger/admiral/server/version.version={{.Version}}
-      - -X github.com/mberwanger/admiral/server/version.commit={{.FullCommit}}
-      - -X github.com/mberwanger/admiral/server/version.date={{.Date}}
-      - -X github.com/mberwanger/admiral/server/version.builtBy=admiral
   - id: admiral-server
     binary: admiral-server
     goos:
@@ -47,24 +20,38 @@ builds:
       - arm
       - arm64
     mod_timestamp: "{{ .CommitTimestamp }}"
-    dir: server
     hooks:
       pre:
-        - cmd: go run cmd/assets/generate.go ../web/build
-          dir: server
+        - cmd: go run cmd/assets/generate.go ./web/build
           output: true
     flags:
       - -tags=withAssets -trimpath
     ldflags:
       - -s -w
-      - -X github.com/mberwanger/admiral/server/version.version={{.Version}}
-      - -X github.com/mberwanger/admiral/server/version.commit={{.FullCommit}}
-      - -X github.com/mberwanger/admiral/server/version.date={{.Date}}
-      - -X github.com/mberwanger/admiral/server/version.builtBy=admiral
-
+      - -X main.version={{.Version}}
+      - -X main.commit={{.FullCommit}}
+      - -X main.date={{.Date}}
+      - -X main.builtBy=admiral
 checksum:
   name_template: 'checksums.txt'
-
+sboms:
+  - artifacts: archive
+archives:
+  - id: admiral-server
+    formats: [tar.gz]
+    name_template: >-
+      {{ .ProjectName }}-v{{ .Version }}_{{ .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - README.md
+      - LICENSE
+      - config.yaml
 changelog:
   sort: asc
   filters:
@@ -97,46 +84,6 @@ changelog:
       order: 410
     - title: "Other Changes"
       order: 9999
-
-archives:
-  - id: admiral
-    ids:
-      - admiral
-    formats: [tar.gz]
-    name_template: >-
-      {{ .ProjectName }}-v{{ .Version }}_{{ .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-    format_overrides:
-      - goos: windows
-        formats: [zip]
-    files:
-      - README.md
-      - LICENSE
-  - id: admiral-server
-    ids:
-     - admiral-server
-    formats: [tar.gz]
-    name_template: >-
-      {{ .ProjectName }}-server-v{{ .Version }}_{{ .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-    format_overrides:
-      - goos: windows
-        formats: [zip]
-    files:
-      - README.md
-      - LICENSE
-      - src: "server/config.yaml"
-        dst: "config.yaml"
-
-sboms:
-  - artifacts: archive
-
 release:
   footer: |
     **Full Changelog**: https://github.com/mberwanger/admiral/compare/{{ .PreviousTag }}...{{ .Tag }}
@@ -144,4 +91,60 @@ release:
     ## Helping out
     This release ({{ .Version }}) was built on {{ .Date }} by {{ .Env.USER }}.
     Thanks to **all** the awesome people who made it possible!
+dockers:
+  - image_templates:
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-server:v{{ .Major }}-amd64"
+      - "ghcr.io/mberwanger/admiral-server:v{{ .Major }}.{{ .Minor }}-amd64"
+      - "ghcr.io/mberwanger/admiral-server:latest-amd64"
+    dockerfile: Dockerfile
+    use: buildx
+    goos: linux
+    goarch: amd64
+    build_flag_templates:
+      - "--pull"
+      - '--label=io.artifacthub.package.maintainers=[{"name":"Admiral","email":"support@admiral.io"}]'
+      - "--label=io.artifacthub.package.license=Apache-2.0"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source={{.GitURL}}"
+      - "--platform=linux/amd64"
+    extra_files:
+      - config.yaml
+  - image_templates:
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-arm64"
+      - "ghcr.io/mberwanger/admiral-server:v{{ .Major }}-arm64"
+      - "ghcr.io/mberwanger/admiral-server:v{{ .Major }}.{{ .Minor }}-arm64"
+      - "ghcr.io/mberwanger/admiral-server:latest-arm64"
+    dockerfile: Dockerfile
+    use: buildx
+    goos: linux
+    goarch: arm64
+    build_flag_templates:
+      - "--pull"
+      - '--label=io.artifacthub.package.maintainers=[{"name":"Admiral","email":"support@admiral.io"}]'
+      - "--label=io.artifacthub.package.license=Apache-2.0"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.name={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source={{.GitURL}}"
+      - "--platform=linux/arm64"
+    extra_files:
+      - config.yaml
+docker_manifests:
+  - name_template: "ghcr.io/mberwanger/admiral-server:{{ .Tag }}"
+    image_templates:
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-arm64"
+  - name_template: "ghcr.io/mberwanger/admiral-server:v{{ .Major }}.{{ .Minor }}"
+    image_templates:
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-arm64"
+  - name_template: "ghcr.io/mberwanger/admiral-server:latest"
+    image_templates:
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-amd64"
+      - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-arm64"
 
