@@ -26,9 +26,8 @@ type migrateCmd struct {
 }
 
 type migrateOpts struct {
-	config string
-	force  bool
-	down   bool
+	force bool
+	down  bool
 }
 
 type migrator struct {

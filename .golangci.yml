@@ -13,6 +13,9 @@ linters:
     - unused
     - ineffassign
     - misspell
+  exclusions:
+    paths:
+      - api
 
 issues:
   max-issues-per-linter: 0

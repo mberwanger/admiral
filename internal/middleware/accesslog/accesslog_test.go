@@ -25,7 +25,7 @@ func TestNew(t *testing.T) {
 	}{
 		{config: nil},
 		{config: &config.AccessLog{
-			StatusCodeFilters: []int{1},
+			StatusCodeFilters: []uint32{1},
 		}},
 	}
 
@@ -64,22 +64,22 @@ func TestInterceptor(t *testing.T) {
 func TestStatusCodeFilter(t *testing.T) {
 	tests := []struct {
 		name              string
-		statusCodeFilters []int
+		statusCodeFilters []uint32
 		wantLogLength     int
 	}{
 		{
 			name:              "single matching status code",
-			statusCodeFilters: []int{0}, // codes.OK
+			statusCodeFilters: []uint32{0}, // codes.OK
 			wantLogLength:     1,
 		},
 		{
 			name:              "non-matching status code",
-			statusCodeFilters: []int{5}, // codes.FailedPrecondition
+			statusCodeFilters: []uint32{5}, // codes.FailedPrecondition
 			wantLogLength:     0,
 		},
 		{
 			name:              "multiple status codes with one match",
-			statusCodeFilters: []int{0, 12, 13, 14}, // codes.OK, codes.NotFound, etc.
+			statusCodeFilters: []uint32{0, 12, 13, 14}, // codes.OK, codes.NotFound, etc.
 			wantLogLength:     1,
 		},
 	}
@@ -132,19 +132,19 @@ func TestStatusCodeFilter(t *testing.T) {
 func TestLogContent(t *testing.T) {
 	tests := []struct {
 		name              string
-		statusCodeFilters []int
+		statusCodeFilters []uint32
 		wantLogLength     int
 		wantStatusCode    int64
 	}{
 		{
 			name:              "single status code match",
-			statusCodeFilters: []int{0}, // codes.OK
+			statusCodeFilters: []uint32{0}, // codes.OK
 			wantLogLength:     1,
 			wantStatusCode:    0,
 		},
 		{
 			name:              "multiple status codes with match",
-			statusCodeFilters: []int{0, 12, 13, 14}, // codes.OK, codes.NotFound, etc.
+			statusCodeFilters: []uint32{0, 12, 13, 14}, // codes.OK, codes.NotFound, etc.
 			wantLogLength:     1,
 			wantStatusCode:    0,
 		},

@@ -20,7 +20,7 @@ USER "$USER"
 COPY --chown=$USER:$USER admiral-server /app
 COPY --chown=$USER:$USER config.yaml /app
 
-CMD ["/app/admiral-server"]
+CMD ["/app/admiral-server", "start", "--config", "config.yaml"]
 
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD curl -f http://localhost:8080/health || exit 1

@@ -53,6 +53,7 @@ func newRootCmd(versionInfo goversion.Info, exit func(int)) *rootCmd {
 	defer func() { _ = logger.Sync() }()
 
 	root := &rootCmd{
+		log:  logger,
 		exit: exit,
 	}
 
@@ -91,7 +92,7 @@ func (cmd *rootCmd) Execute(args []string) error {
 		code := 1
 		msg := "command failed"
 
-		var eerr *exitError
+		eerr := &exitError{}
 		if errors.As(err, &eerr) {
 			code = eerr.code
 			if eerr.details != "" {

@@ -8,8 +8,7 @@ import (
 )
 
 var (
-	apiPattern         = regexp.MustCompile(`^/api/v\d+/`)
-	staticRoutePattern = regexp.MustCompile(`^/static*`)
+	apiPattern = regexp.MustCompile(`^/api/v\d+/`)
 )
 
 type assetHandler struct {

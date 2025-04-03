@@ -111,6 +111,8 @@ dockers:
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--label=org.opencontainers.image.source={{.GitURL}}"
       - "--platform=linux/amd64"
+    extra_files:
+      - config.yaml
   - image_templates:
       - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-arm64"
       - "ghcr.io/mberwanger/admiral-server:v{{ .Major }}-arm64"
@@ -130,6 +132,8 @@ dockers:
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--label=org.opencontainers.image.source={{.GitURL}}"
       - "--platform=linux/arm64"
+    extra_files:
+      - config.yaml
 docker_manifests:
   - name_template: "ghcr.io/mberwanger/admiral-server:{{ .Tag }}"
     image_templates:

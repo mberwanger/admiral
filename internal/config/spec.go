@@ -46,7 +46,7 @@ type Logger struct {
 }
 
 type AccessLog struct {
-	StatusCodeFilters []int `yaml:"status_code_filters"`
+	StatusCodeFilters []uint32 `yaml:"status_code_filters"`
 }
 
 type Stats struct {

@@ -4,7 +4,7 @@ tmp_dir = "build"
 
 [build]
   args_bin = []
-  bin = "./build/admiral-server start -c config.yaml -env .env.local"
+  bin = "./build/admiral-server start -c config.yaml --env .env.local"
   cmd = "make server"
   delay = 0
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "web/node_modules"]

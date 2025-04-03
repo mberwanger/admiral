@@ -203,8 +203,8 @@ func Run(cfg *config.Config, cf *ComponentFactory, assets http.FileSystem) {
 	)
 
 	go func() {
-		if err = srv.ListenAndServe(); !errors.Is(http.ErrServerClosed, err) {
-			// Only log an error if it's not due to shutdown or close
+		err = srv.ListenAndServe()
+		if !errors.Is(http.ErrServerClosed, err) {
 			logger.Fatal("error bringing up listener", zap.Error(err))
 		}
 	}()
