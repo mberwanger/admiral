@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    directory: "cli"
+    directory: "."
     schedule:
       interval: "daily"
       time: "08:00"
@@ -12,73 +12,7 @@ updates:
       include: "scope"
 
   - package-ecosystem: "docker"
-    directory: "cli"
-    schedule:
-      interval: "daily"
-      time: "08:00"
-    labels:
-      - "dependencies"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
-
-  - package-ecosystem: "gomod"
-    directory: "controller"
-    schedule:
-      interval: "daily"
-      time: "08:00"
-    labels:
-      - "dependencies"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
-
-  - package-ecosystem: "docker"
-    directory: "controller"
-    schedule:
-      interval: "daily"
-      time: "08:00"
-    labels:
-      - "dependencies"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
-
-  - package-ecosystem: "gomod"
-    directory: "client"
-    schedule:
-      interval: "daily"
-      time: "08:00"
-    labels:
-      - "dependencies"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
-
-  - package-ecosystem: "docker"
-    directory: "client"
-    schedule:
-      interval: "daily"
-      time: "08:00"
-    labels:
-      - "dependencies"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
-
-  - package-ecosystem: "gomod"
-    directory: "server"
-    schedule:
-      interval: "daily"
-      time: "08:00"
-    labels:
-      - "dependencies"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
-
-  - package-ecosystem: "docker"
-    directory: "server"
+    directory: "."
     schedule:
       interval: "daily"
       time: "08:00"
@@ -109,4 +43,3 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
-
