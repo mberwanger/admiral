@@ -33,7 +33,7 @@ verify: server-verify web-verify proto-verify
 
 .PHONY: clean # Remove build and cache artifacts.
 clean:
-	rm -rf build cmd/assets/generated_assets.go dist web/build web/node_modules
+	rm -rf build cmd/assets/generated_assets.go web/build web/node_modules
 
 .PHONY: proto # Generate proto assets.
 proto:
