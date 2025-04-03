@@ -33,7 +33,7 @@ jobs:
         with:
           bun-version: latest
       - name: Install syft
-        uses: anchore/sbom-action/download-syft@24b0d5238516480139aa8bc6f92eeb7b54a9eb0a # v0.15.5
+        uses: anchore/sbom-action/download-syft@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
       - name: Set up QEMU
         uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
       - name: Set up Docker Buildx
