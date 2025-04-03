@@ -17,7 +17,7 @@ require (
 	github.com/shurcooL/vfsgen v0.0.0-20230704071429-0000e147ea92
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
-	github.com/uber-go/tally/v4 v4.1.16
+	github.com/uber-go/tally/v4 v4.1.17
 	go.uber.org/zap v1.27.0
 	golang.org/x/net v0.38.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20250324211829-b45e905df463
