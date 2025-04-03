@@ -1,42 +1,24 @@
-# Web build
-FROM oven/bun:latest AS webbuild
+FROM alpine:3.21
 
+ARG USER=admiral
+ARG UID=1000
+ARG GID=1000
+
+# Create non-root user and group
+RUN addgroup -S -g "$GID" "$USER" && \
+    adduser -S -u "$UID" -G "$USER" "$USER"
+
+# Minimal upgrade & install only what's necessary
+RUN apk --no-cache add --upgrade ca-certificates && \
+    update-ca-certificates
+
+# Set working dir and switch to non-root user
 WORKDIR /app
+USER "$USER"
 
-COPY ./web ./web
-COPY ./tools ./tools
-COPY ./Makefile .
-
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-      make \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/
-
-RUN make web
-
-# Go build
-FROM golang:1.24-bullseye AS gobuild
-
-WORKDIR /app
-
-COPY ./server ./server
-COPY ./tools/preflight-checks.sh ./tools/preflight-checks.sh
-COPY ./Makefile .
-
-COPY --from=webbuild /app/web/build ./web/build
-
-RUN make server-with-assets
-
-# Copy binary to final image
-FROM gcr.io/distroless/base-debian12
-
-EXPOSE 8080
-
-WORKDIR /app
-
-COPY --from=gobuild /app/build/admiral-server /app
-COPY ./server/config.yaml /app
+# Copy statically-linked binary
+COPY --chown=$USER:$USER admiral-server /app
+COPY --chown=$USER:$USER config.yaml /app
 
 CMD ["/app/admiral-server"]
 
