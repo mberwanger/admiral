@@ -8,6 +8,7 @@ before:
 report_sizes: true
 env:
   - CGO_ENABLED=0
+dist: build
 builds:
   - id: admiral-server
     binary: admiral-server
@@ -147,4 +148,3 @@ docker_manifests:
     image_templates:
       - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-amd64"
       - "ghcr.io/mberwanger/admiral-server:{{ .Tag }}-arm64"
-
