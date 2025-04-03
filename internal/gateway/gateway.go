@@ -16,15 +16,15 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"go.admiral.io/admiral/server/config"
-	"go.admiral.io/admiral/server/endpoint"
-	"go.admiral.io/admiral/server/gateway/mux"
-	"go.admiral.io/admiral/server/gateway/stats"
-	"go.admiral.io/admiral/server/middleware"
-	"go.admiral.io/admiral/server/middleware/accesslog"
-	"go.admiral.io/admiral/server/middleware/errorintercept"
-	"go.admiral.io/admiral/server/middleware/timeouts"
-	"go.admiral.io/admiral/server/service"
+	"go.admiral.io/admiral/internal/config"
+	"go.admiral.io/admiral/internal/endpoint"
+	"go.admiral.io/admiral/internal/gateway/mux"
+	"go.admiral.io/admiral/internal/gateway/stats"
+	"go.admiral.io/admiral/internal/middleware"
+	"go.admiral.io/admiral/internal/middleware/accesslog"
+	"go.admiral.io/admiral/internal/middleware/errorintercept"
+	"go.admiral.io/admiral/internal/middleware/timeouts"
+	"go.admiral.io/admiral/internal/service"
 )
 
 type ComponentFactory struct {

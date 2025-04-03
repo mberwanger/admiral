@@ -1,4 +1,4 @@
-package app
+package server
 
 import (
 	"database/sql"
@@ -16,8 +16,8 @@ import (
 	"github.com/uber-go/tally/v4"
 	"go.uber.org/zap"
 
-	"go.admiral.io/admiral/server/config"
-	"go.admiral.io/admiral/server/service/database"
+	"go.admiral.io/admiral/internal/config"
+	"go.admiral.io/admiral/internal/service/database"
 )
 
 type migrateCmd struct {

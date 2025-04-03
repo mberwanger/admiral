@@ -5,8 +5,8 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
-
-	"go.admiral.io/admiral/server/endpoint"
+	
+	"go.admiral.io/admiral/internal/endpoint"
 )
 
 func newRegistrar(ctx context.Context, m *runtime.ServeMux, s *grpc.Server, c *grpc.ClientConn) endpoint.Registrar {

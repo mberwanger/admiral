@@ -17,8 +17,8 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
-
-	"go.admiral.io/admiral/server/config"
+	
+	"go.admiral.io/admiral/internal/config"
 )
 
 const (

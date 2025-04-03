@@ -1,15 +1,15 @@
 package gateway
 
 import (
-	"go.admiral.io/admiral/server/endpoint"
-	"go.admiral.io/admiral/server/endpoint/application"
-	"go.admiral.io/admiral/server/endpoint/cluster"
-	"go.admiral.io/admiral/server/endpoint/healthcheck"
-	"go.admiral.io/admiral/server/middleware"
-	"go.admiral.io/admiral/server/middleware/stats"
-	"go.admiral.io/admiral/server/middleware/validate"
-	"go.admiral.io/admiral/server/service"
-	dbservice "go.admiral.io/admiral/server/service/database"
+	"go.admiral.io/admiral/internal/endpoint"
+	"go.admiral.io/admiral/internal/endpoint/application"
+	"go.admiral.io/admiral/internal/endpoint/cluster"
+	"go.admiral.io/admiral/internal/endpoint/healthcheck"
+	"go.admiral.io/admiral/internal/middleware"
+	"go.admiral.io/admiral/internal/middleware/stats"
+	"go.admiral.io/admiral/internal/middleware/validate"
+	"go.admiral.io/admiral/internal/service"
+	dbservice "go.admiral.io/admiral/internal/service/database"
 )
 
 var Services = service.Factory{

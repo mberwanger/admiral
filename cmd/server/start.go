@@ -1,11 +1,11 @@
-package app
+package server
 
 import (
 	"github.com/spf13/cobra"
 
-	"go.admiral.io/admiral/server/cmd/assets"
-	"go.admiral.io/admiral/server/config"
-	"go.admiral.io/admiral/server/gateway"
+	"go.admiral.io/admiral/cmd/assets"
+	"go.admiral.io/admiral/internal/config"
+	"go.admiral.io/admiral/internal/gateway"
 )
 
 type startCmd struct {

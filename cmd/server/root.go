@@ -1,10 +1,10 @@
-package app
+package server
 
 import (
 	"errors"
-	"go.admiral.io/admiral/pkg/version"
 	"strings"
 
+	goversion "github.com/caarlos0/go-version"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -37,14 +37,14 @@ func (f *envFiles) Type() string {
 }
 
 // Execute initializes and runs the root command.
-func Execute(versionInfo version.Info, exitFunc func(int), args []string) {
+func Execute(versionInfo goversion.Info, exitFunc func(int), args []string) {
 	cmd := newRootCmd(versionInfo, exitFunc)
 	if err := cmd.Execute(args); err != nil {
 		exitFunc(1)
 	}
 }
 
-func newRootCmd(version version.Info, exit func(int)) *rootCmd {
+func newRootCmd(versionInfo goversion.Info, exit func(int)) *rootCmd {
 	// Set up logging with a production configuration.
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -57,9 +57,9 @@ func newRootCmd(version version.Info, exit func(int)) *rootCmd {
 	}
 
 	cmd := &cobra.Command{
-		Use:               "admiral- server",
+		Use:               "admiral-server",
 		Short:             "Admiral - Platform Orchestrator that helps developers build, deploy, and manage their applications",
-		Version:           version.String(),
+		Version:           versionInfo.String(),
 		SilenceUsage:      true,
 		SilenceErrors:     true,
 		Args:              cobra.NoArgs,

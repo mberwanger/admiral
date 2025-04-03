@@ -1,4 +1,4 @@
-package app
+package server
 
 type exitError struct {
 	err     error
