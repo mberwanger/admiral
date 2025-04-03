@@ -22,9 +22,9 @@ server:
 	configFile := filepath.Join(tmpDir, "config.yaml")
 	envFile := filepath.Join(tmpDir, ".env")
 
-	err := os.WriteFile(configFile, []byte(configContent), 0644)
+	err := os.WriteFile(configFile, []byte(configContent), 0600)
 	assert.NoError(t, err)
-	err = os.WriteFile(envFile, []byte(envContent), 0644)
+	err = os.WriteFile(envFile, []byte(envContent), 0600)
 	assert.NoError(t, err)
 
 	t.Run("ValidConfigAndEnv", func(t *testing.T) {
@@ -41,9 +41,9 @@ func TestLoadEnv(t *testing.T) {
 	envFile1 := filepath.Join(tmpDir, ".env1")
 	envFile2 := filepath.Join(tmpDir, ".env2")
 
-	err := os.WriteFile(envFile1, []byte("KEY1=value1"), 0644)
+	err := os.WriteFile(envFile1, []byte("KEY1=value1"), 0600)
 	assert.NoError(t, err)
-	err = os.WriteFile(envFile2, []byte("KEY2=value2"), 0644)
+	err = os.WriteFile(envFile2, []byte("KEY2=value2"), 0600)
 	assert.NoError(t, err)
 
 	t.Run("LoadMultipleEnvFiles", func(t *testing.T) {
@@ -73,7 +73,7 @@ server:
     address: "0.0.0.0"
     port: 50051
 `
-		err := os.WriteFile(configFile, []byte(content), 0644)
+		err := os.WriteFile(configFile, []byte(content), 0600)
 		assert.NoError(t, err)
 
 		cfg, err := parseConfig(configFile, false)
@@ -90,7 +90,7 @@ server:
     address: "0.0.0.0"
     port: invalid # Invalid type
 `
-		err := os.WriteFile(configFile, []byte(content), 0644)
+		err := os.WriteFile(configFile, []byte(content), 0600)
 		assert.NoError(t, err)
 
 		_, err = parseConfig(configFile, false)
