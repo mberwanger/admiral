@@ -3,7 +3,6 @@
 # Admiral
 
 [![Release](https://img.shields.io/github/v/release/mberwanger/admiral?style=flat-square)](https://github.com/mberwanger/admiral/releases/latest)
-[![Build status](https://img.shields.io/github/actions/workflow/status/mberwanger/admiral/ci.yaml?style=flat-square)](https://github.com/mberwanger/admiral/actions/workflows/ci.yaml)
 [![GitHub License](https://img.shields.io/github/license/mberwanger/admiral?style=flat-square)](https://github.com/mberwanger/admiral/blob/master/LICENSE)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/mberwanger/admiral/badge?style=flat-square)](https://scorecard.dev/viewer/?uri=github.com/mberwanger/admiral)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mberwanger/admiral?style=flat-square)](https://goreportcard.com/report/github.com/mberwanger/admiral)
