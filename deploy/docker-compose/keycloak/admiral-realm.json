@@ -398,8 +398,13 @@
   "users" : [ {
     "id" : "3f79326f-2b04-409c-8536-e763d615fb64",
     "username" : "admin",
-    "email" : "admin@example.com",
+    "firstName" : "Michael",
+    "lastName" : "Scott",
+    "email" : "michael.scott@admiral.test",
     "emailVerified" : true,
+    "attributes" : {
+      "picture" : [ "https://avatar.iran.liara.run/public/boy" ]
+    },
     "createdTimestamp" : 1710457887327,
     "enabled" : true,
     "totp" : false,
@@ -419,8 +424,13 @@
   }, {
     "id" : "2b300cde-84d5-4c03-b670-708ad3cefdc7",
     "username" : "demo",
-    "email" : "demo@example.com",
+    "firstName" : "Dwight",
+    "lastName" : "Schrute",
+    "email" : "dwight.schrute@admiral.test",
     "emailVerified" : true,
+    "attributes" : {
+      "picture" : [ "https://avatar.iran.liara.run/public/girl" ]
+    },
     "createdTimestamp" : 1710457824381,
     "enabled" : true,
     "totp" : false,

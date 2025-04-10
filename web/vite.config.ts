@@ -28,7 +28,7 @@ export default ({ mode }: { mode: string }): UserConfig => {
       host: 'localhost',
       port: 8888,
       proxy: {
-        '^/((auth|api)/.*)|(me|meta|health)$': {
+        '^/((auth|api)/.*)|(me|meta|healthcheck)$': {
           target: process.env.VITE_API_ENDPOINT || "http://localhost:8080",
           changeOrigin: true,
           xfwd: true,

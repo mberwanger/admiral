@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package admiral.authn.v1;
+
+option go_package = "go.admiral.io/admiral/api/authn/v1;authnv1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+service AuthnAPI {
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      get : "/auth/login"
+    };
+  }
+
+  rpc Callback(CallbackRequest) returns (CallbackResponse) {
+    option (google.api.http) = {
+      get : "/auth/callback"
+    };
+  }
+
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      get : "/auth/logout"
+    };
+  }
+}
+
+message LoginRequest {
+  string redirect_url = 1;
+}
+
+message LoginResponse {
+   message Token {
+    string access_token = 1;
+    string refresh_token = 2;
+  }
+
+  // If the user presents a refresh token and refresh succeeds, they will receive the token in response. Otherwise,
+  // they will be redirected through the authentication flow.
+  oneof return {
+    string auth_url = 1;
+    Token token = 2;
+  }
+}
+
+message CallbackRequest {
+  string code = 1;
+  string state = 2;
+  string error = 3;
+  string error_description = 4;
+}
+
+message CallbackResponse {
+
+  // This is the token that the user should present. Note: this response is only valid in a gRPC context. In an HTTP
+  // context the user will be redirected.
+  string access_token = 1;
+
+  // The refresh token will be empty if no refresh token was issued.
+  string refresh_token = 2;
+}
+
+message LogoutRequest {}
+
+message LogoutResponse {}

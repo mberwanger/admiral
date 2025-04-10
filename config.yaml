@@ -29,12 +29,11 @@ services:
     ssl_mode: ${POSTGRES_SSL_MODE}
   authn:
     issuer: ${OAUTH2_ISSUER}
-    client_id:  ${OAUTH2_CLIENT_ID}
-    client_secret:  ${OAUTH2_CLIENT_SECRET}
-    scopes:
-      - openid
-      - profile
-      - email
+    client_id: ${OAUTH2_CLIENT_ID}
+    client_secret: ${OAUTH2_CLIENT_SECRET}
+    redirect_url: ${OAUTH2_REDIRECT_URL}
+    nonce_secret: ${OAUTH2_NONCE_SECRET}
+    scopes: []
 #    claim_mapping:
 #      preferred_username: other_user_name
 #      email: mail

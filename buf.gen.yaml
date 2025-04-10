@@ -29,9 +29,5 @@ plugins:
     out: api
     opt:
       - paths=source_relative
-  - remote: buf.build/bufbuild/es
-    out: web/src/api
-  - remote: buf.build/connectrpc/query-es
-    out: web/src/api
 inputs:
   - directory: proto

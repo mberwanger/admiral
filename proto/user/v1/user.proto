@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package admiral.user.v1;
+
+option go_package = "go.admiral.io/admiral/api/user/v1;userv1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+service UserAPI {
+  rpc GetMe(GetMeRequest) returns (GetMeResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/user"
+    };
+  }
+
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/user/{id}"
+    };
+  }
+}
+
+message User {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 255
+  ];
+
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message GetMeRequest {}
+message GetMeResponse {
+  User user = 1;
+}
+
+message GetUserRequest {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+}
+message GetUserResponse {
+  User user = 1;
+}
