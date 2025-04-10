@@ -4,7 +4,7 @@
 
 [![Release](https://img.shields.io/github/v/release/mberwanger/admiral?style=flat-square)](https://github.com/mberwanger/admiral/releases/latest)
 [![GitHub License](https://img.shields.io/github/license/mberwanger/admiral?style=flat-square)](https://github.com/mberwanger/admiral/blob/master/LICENSE)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/mberwanger/admiral/badge?style=flat-square)](https://scorecard.dev/viewer/?uri=github.com/mberwanger/admiral)
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/mberwanger/admiral?label=openssf%20scorecard&style=flat-square)](https://scorecard.dev/viewer/?uri=github.com/mberwanger/admiral)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mberwanger/admiral?style=flat-square)](https://goreportcard.com/report/github.com/mberwanger/admiral)
 
 ## Contributing
