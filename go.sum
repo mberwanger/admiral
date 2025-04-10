@@ -12,8 +12,8 @@ github.com/antlr4-go/antlr/v4 v4.13.1 h1:SqQKkuVZ+zWkMMNkjy5FZe5mr5WURWnlpmOuzYW
 github.com/antlr4-go/antlr/v4 v4.13.1/go.mod h1:GKmUxMtwp6ZgGwZSva4eWPC5mS6vUAmOABFgjdkM7Nw=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
-github.com/bufbuild/protovalidate-go v0.9.3-0.20250317160558-38a17488914d h1:Y6Yp/LwSaRG8gw9GyyQD7jensL9NXqPlkbuulaAvCEE=
-github.com/bufbuild/protovalidate-go v0.9.3-0.20250317160558-38a17488914d/go.mod h1:SZN6Qr3lPWuKMoQtIhKdhESkb+3m2vk0lqN9WMuZDDU=
+github.com/bufbuild/protovalidate-go v0.9.3 h1:XvdtwQuppS3wjzGfpOirsqwN5ExH2+PiIuA/XZd3MTM=
+github.com/bufbuild/protovalidate-go v0.9.3/go.mod h1:2lUDP6fNd3wxznRNH3Nj64VB07+PySeslamkerwP6tE=
 github.com/caarlos0/go-version v0.2.0 h1:TTD5dF3PBAtRHbfCKRE173SrVVpbE0yX95EDQ4BwTGs=
 github.com/caarlos0/go-version v0.2.0/go.mod h1:X+rI5VAtJDpcjCjeEIXpxGa5+rTcgur1FK66wS0/944=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
